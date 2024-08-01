@@ -1,0 +1,9 @@
+{
+  "id": "90af61a0-28a5-4c2f-b5a9-dace2e6979e5",
+  "template": "empty",
+  "modules": {
+    "CarpetProject": {
+      "path": "CarpetProject.abpmdl"
+    }
+  }
+}

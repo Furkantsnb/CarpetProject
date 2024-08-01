@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "CarpetProject.Blazor.WebApp.Tiered.Client": {
+      "commandName": "Project",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:54135;http://localhost:54136"
+    }
+  }
+}

@@ -1,0 +1,70 @@
+{
+  "folders": {
+    "items": {
+      "src": {},
+      "test": {}
+    }
+  },
+  "packages": {
+    "CarpetProject.Domain": {
+      "path": "src/CarpetProject.Domain/CarpetProject.Domain.abppkg",
+      "folder": "src"
+    },
+    "CarpetProject.Application": {
+      "path": "src/CarpetProject.Application/CarpetProject.Application.abppkg",
+      "folder": "src"
+    },
+    "CarpetProject.EntityFrameworkCore": {
+      "path": "src/CarpetProject.EntityFrameworkCore/CarpetProject.EntityFrameworkCore.abppkg",
+      "folder": "src"
+    },
+    "CarpetProject.Web": {
+      "path": "src/CarpetProject.Web/CarpetProject.Web.abppkg",
+      "folder": "src"
+    },
+    "CarpetProject.Application.Tests": {
+      "path": "test/CarpetProject.Application.Tests/CarpetProject.Application.Tests.abppkg",
+      "folder": "test"
+    },
+    "CarpetProject.Web.Tests": {
+      "path": "test/CarpetProject.Web.Tests/CarpetProject.Web.Tests.abppkg",
+      "folder": "test"
+    },
+    "CarpetProject.Domain.Shared": {
+      "path": "src/CarpetProject.Domain.Shared/CarpetProject.Domain.Shared.abppkg",
+      "folder": "src"
+    },
+    "CarpetProject.Application.Contracts": {
+      "path": "src/CarpetProject.Application.Contracts/CarpetProject.Application.Contracts.abppkg",
+      "folder": "src"
+    },
+    "CarpetProject.HttpApi": {
+      "path": "src/CarpetProject.HttpApi/CarpetProject.HttpApi.abppkg",
+      "folder": "src"
+    },
+    "CarpetProject.HttpApi.Client": {
+      "path": "src/CarpetProject.HttpApi.Client/CarpetProject.HttpApi.Client.abppkg",
+      "folder": "src"
+    },
+    "CarpetProject.EntityFrameworkCore.Tests": {
+      "path": "test/CarpetProject.EntityFrameworkCore.Tests/CarpetProject.EntityFrameworkCore.Tests.abppkg",
+      "folder": "test"
+    },
+    "CarpetProject.TestBase": {
+      "path": "test/CarpetProject.TestBase/CarpetProject.TestBase.abppkg",
+      "folder": "test"
+    },
+    "CarpetProject.Domain.Tests": {
+      "path": "test/CarpetProject.Domain.Tests/CarpetProject.Domain.Tests.abppkg",
+      "folder": "test"
+    },
+    "CarpetProject.HttpApi.Client.ConsoleTestApp": {
+      "path": "test/CarpetProject.HttpApi.Client.ConsoleTestApp/CarpetProject.HttpApi.Client.ConsoleTestApp.abppkg",
+      "folder": "test"
+    },
+    "CarpetProject.DbMigrator": {
+      "path": "src/CarpetProject.DbMigrator/CarpetProject.DbMigrator.abppkg",
+      "folder": "src"
+    }
+  }
+}
