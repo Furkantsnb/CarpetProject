@@ -8,7 +8,7 @@ using Volo.Abp.Application.Dtos;
 
 namespace CarpetProject.Entities.Products
 {
-    public class ProductWithCategoryDto : EntityDto
+    public class ProductWithCategoryDto 
     {
         public ProductDto Product { get; set; }
         public CategoryDto Category { get; set; }

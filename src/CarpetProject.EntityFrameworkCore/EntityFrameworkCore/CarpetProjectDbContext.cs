@@ -2,6 +2,7 @@
 using CarpetProject.Products;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
@@ -57,6 +58,7 @@ public class CarpetProjectDbContext :
 
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
+    public DbSet<ProductImage> ProductImages { get; set; }
 
     #endregion
 
@@ -90,7 +92,12 @@ public class CarpetProjectDbContext :
         //    //...
         //});
 
-
+        builder.Entity<Product>(entity =>
+        {
+            entity.HasMany(e => e.ProductImages)
+                .WithOne(e => e.Product)
+                .HasForeignKey(e => e.ProductId);
+        });
 
         builder.Entity<Product>(b =>
         {

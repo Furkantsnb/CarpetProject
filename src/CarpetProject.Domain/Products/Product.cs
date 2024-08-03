@@ -14,21 +14,22 @@ namespace CarpetProject.Products
         public string Description { get; set; }
         public decimal Price { get; set; }
         public int CategoryId { get; set; }
-        public string ImageUrl { get; set; }
-        public bool IsApproved { get; set; }//ürün satışa koyulsun mu koyulmasın mı?
-        public bool IsHome { get; set; }//Ana sayfada gözüksün mü gözükmesin mi
-        public bool IsCertified { get; set; }//ürün sertfikası varsa 
-
+      
+        public bool IsApproved { get; set; }
+        public bool IsHome { get; set; }
+        public bool IsCertified { get; set; }
         public string CertificationDetails { get; set; }
-        public string Ingredients { get; set; }//ürün içeriğini belirtir.
-        public string Usage { get; set; }//ürünün nasıl kullanılması gerektiğini içerir
-        public string AdditionalInfo { get; set; }//ürün hakkında ek bilgi verir
+        public string Ingredients { get; set; }
+        public string Usage { get; set; }
+        public string AdditionalInfo { get; set; }
 
         public virtual ICollection<Category> Categories { get; set; }
+        public virtual ICollection<ProductImage> ProductImages { get; set; }
 
         public Product()
         {
             Categories = new HashSet<Category>();
+            ProductImages = new HashSet<ProductImage>();
         }
     }
 }
