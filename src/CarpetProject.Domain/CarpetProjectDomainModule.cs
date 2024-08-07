@@ -15,10 +15,11 @@ using Volo.Abp.PermissionManagement.OpenIddict;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
 using Volo.CmsKit;
+using EasyAbp.FileManagement;
 
 
 namespace CarpetProject;
-//[DependsOn(typeof(FileManagementDomainModule))]
+/[DependsOn(typeof(FileManagementDomainModule))]
 [DependsOn(
     typeof(CarpetProjectDomainSharedModule),
     typeof(AbpAuditLoggingDomainModule),

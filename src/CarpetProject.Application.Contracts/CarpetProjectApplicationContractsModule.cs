@@ -1,4 +1,5 @@
 
+using EasyAbp.FileManagement;
 using Volo.Abp.Account;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
@@ -10,7 +11,7 @@ using Volo.Abp.TenantManagement;
 using Volo.CmsKit;
 
 namespace CarpetProject;
-//[DependsOn(typeof(FileManagementApplicationContractsModule))]
+[DependsOn(typeof(FileManagementApplicationContractsModule))]
 [DependsOn(
     typeof(CarpetProjectDomainSharedModule),
     typeof(AbpAccountApplicationContractsModule),

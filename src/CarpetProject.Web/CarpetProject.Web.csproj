@@ -50,6 +50,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\FileManagement\src\EasyAbp.FileManagement.Web\EasyAbp.FileManagement.Web.csproj" />
     <ProjectReference Include="..\CarpetProject.Application\CarpetProject.Application.csproj" />
     <ProjectReference Include="..\CarpetProject.HttpApi\CarpetProject.HttpApi.csproj" />
     <ProjectReference Include="..\CarpetProject.EntityFrameworkCore\CarpetProject.EntityFrameworkCore.csproj" />

@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\FileManagement\src\EasyAbp.FileManagement.HttpApi.Client\EasyAbp.FileManagement.HttpApi.Client.csproj" />
     <ProjectReference Include="..\CarpetProject.Application.Contracts\CarpetProject.Application.Contracts.csproj" />
   </ItemGroup>
 

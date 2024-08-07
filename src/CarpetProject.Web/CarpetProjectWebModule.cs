@@ -42,10 +42,11 @@ using Volo.Abp.VirtualFileSystem;
 using Volo.CmsKit.Web;
 using Volo.Abp.BlobStoring.Minio;
 using Volo.Abp.BlobStoring;
+using EasyAbp.FileManagement.Web;
 
 
 namespace CarpetProject.Web;
-//[DependsOn(typeof(FileManagementWebModule))]
+[DependsOn(typeof(FileManagementWebModule))]
 [DependsOn(
     typeof(CarpetProjectHttpApiModule),
     typeof(CarpetProjectApplicationModule),
