@@ -13,7 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="EasyAbp.FileManagement.HttpApi" Version="5.3.0" />
     <PackageReference Include="Volo.Abp.Account.HttpApi" Version="8.2.0" />
     <PackageReference Include="Volo.Abp.Identity.HttpApi" Version="8.2.0" />
     <PackageReference Include="Volo.Abp.PermissionManagement.HttpApi" Version="8.2.0" />

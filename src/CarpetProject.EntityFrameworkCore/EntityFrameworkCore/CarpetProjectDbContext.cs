@@ -1,9 +1,7 @@
 using CarpetProject.Categories;
 using CarpetProject.Products;
-using EasyAbp.FileManagement.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using System.Reflection.Emit;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
@@ -84,7 +82,7 @@ public class CarpetProjectDbContext :
         builder.ConfigureOpenIddict();
         builder.ConfigureFeatureManagement();
         builder.ConfigureTenantManagement();
-        builder.ConfigureFileManagement();
+        //builder.ConfigureFileManagement();
 
         /* Configure your own tables/entities inside here */
 

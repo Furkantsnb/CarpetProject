@@ -13,10 +13,9 @@ using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
 using Volo.CmsKit.EntityFrameworkCore;
-using EasyAbp.FileManagement.EntityFrameworkCore;
 
 namespace CarpetProject.EntityFrameworkCore;
-[DependsOn(typeof(FileManagementEntityFrameworkCoreModule))]
+//[DependsOn(typeof(FileManagementEntityFrameworkCoreModule))]
 [DependsOn(
     typeof(CarpetProjectDomainModule),
     typeof(AbpIdentityEntityFrameworkCoreModule),

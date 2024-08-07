@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="EasyAbp.FileManagement.Domain" Version="5.3.0" />
     <PackageReference Include="Volo.Abp.Ddd.Application" Version="8.2.0" />
     <PackageReference Include="Volo.Abp.Emailing" Version="8.2.0" />
     <PackageReference Include="Volo.Abp.Identity.Domain" Version="8.2.0" />
