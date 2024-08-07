@@ -1,5 +1,6 @@
-﻿using CarpetProject.Categories;
+using CarpetProject.Categories;
 using CarpetProject.Products;
+using EasyAbp.FileManagement.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Reflection.Emit;
@@ -17,6 +18,7 @@ using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
+using Volo.CmsKit.EntityFrameworkCore;
 
 namespace CarpetProject.EntityFrameworkCore;
 
@@ -82,6 +84,7 @@ public class CarpetProjectDbContext :
         builder.ConfigureOpenIddict();
         builder.ConfigureFeatureManagement();
         builder.ConfigureTenantManagement();
+        builder.ConfigureFileManagement();
 
         /* Configure your own tables/entities inside here */
 
@@ -146,5 +149,6 @@ public class CarpetProjectDbContext :
                       .OnDelete(DeleteBehavior.Cascade)
              );
         });
-    }
+        builder.ConfigureCmsKit();
+        }
 }

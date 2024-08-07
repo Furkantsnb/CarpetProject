@@ -1,4 +1,5 @@
-﻿using Volo.Abp.Threading;
+﻿using Volo.Abp.GlobalFeatures;
+using Volo.Abp.Threading;
 
 namespace CarpetProject;
 
@@ -18,5 +19,11 @@ public static class CarpetProjectGlobalFeatureConfigurator
                  * https://docs.abp.io/en/abp/latest/Global-Features
                  */
         });
+        GlobalFeatureManager.Instance.Modules.CmsKit(cmsKit =>
+        {
+            cmsKit.EnableAll();
+            
+        });
+
     }
 }

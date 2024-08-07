@@ -1,4 +1,4 @@
-﻿using Localization.Resources.AbpUi;
+using Localization.Resources.AbpUi;
 using CarpetProject.Localization;
 using Volo.Abp.Account;
 using Volo.Abp.FeatureManagement;
@@ -8,9 +8,11 @@ using Volo.Abp.Modularity;
 using Volo.Abp.PermissionManagement.HttpApi;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
+using Volo.CmsKit;
+using EasyAbp.FileManagement;
 
 namespace CarpetProject;
-
+[DependsOn(typeof(FileManagementHttpApiModule))]
 [DependsOn(
     typeof(CarpetProjectApplicationContractsModule),
     typeof(AbpAccountHttpApiModule),
@@ -20,7 +22,8 @@ namespace CarpetProject;
     typeof(AbpFeatureManagementHttpApiModule),
     typeof(AbpSettingManagementHttpApiModule)
     )]
-public class CarpetProjectHttpApiModule : AbpModule
+[DependsOn(typeof(CmsKitHttpApiModule))]
+    public class CarpetProjectHttpApiModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {

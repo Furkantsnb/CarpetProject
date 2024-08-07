@@ -1,4 +1,5 @@
-﻿using Volo.Abp.Account;
+using EasyAbp.FileManagement;
+using Volo.Abp.Account;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
@@ -6,9 +7,10 @@ using Volo.Abp.Modularity;
 using Volo.Abp.PermissionManagement;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
+using Volo.CmsKit;
 
 namespace CarpetProject;
-
+[DependsOn(typeof(FileManagementApplicationModule))]
 [DependsOn(
     typeof(CarpetProjectDomainModule),
     typeof(AbpAccountApplicationModule),
@@ -19,7 +21,8 @@ namespace CarpetProject;
     typeof(AbpFeatureManagementApplicationModule),
     typeof(AbpSettingManagementApplicationModule)
     )]
-public class CarpetProjectApplicationModule : AbpModule
+[DependsOn(typeof(CmsKitApplicationModule))]
+    public class CarpetProjectApplicationModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {

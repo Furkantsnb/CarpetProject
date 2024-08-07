@@ -1,4 +1,5 @@
-﻿using CarpetProject.Localization;
+using CarpetProject.Localization;
+using EasyAbp.FileManagement;
 using Volo.Abp.AuditLogging;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.FeatureManagement;
@@ -12,9 +13,10 @@ using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.Validation.Localization;
 using Volo.Abp.VirtualFileSystem;
+using Volo.CmsKit;
 
 namespace CarpetProject;
-
+[DependsOn(typeof(FileManagementDomainSharedModule))]
 [DependsOn(
     typeof(AbpAuditLoggingDomainSharedModule),
     typeof(AbpBackgroundJobsDomainSharedModule),
@@ -25,7 +27,8 @@ namespace CarpetProject;
     typeof(AbpSettingManagementDomainSharedModule),
     typeof(AbpTenantManagementDomainSharedModule)    
     )]
-public class CarpetProjectDomainSharedModule : AbpModule
+[DependsOn(typeof(CmsKitDomainSharedModule))]
+    public class CarpetProjectDomainSharedModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {

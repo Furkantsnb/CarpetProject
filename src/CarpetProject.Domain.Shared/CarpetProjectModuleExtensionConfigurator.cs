@@ -37,37 +37,43 @@ public static class CarpetProjectModuleExtensionConfigurator
 
     private static void ConfigureExtraProperties()
     {
-        /* You can configure extra properties for the
-         * entities defined in the modules used by your application.
-         *
-         * This class can be used to define these extra properties
-         * with a high level, easy to use API.
-         *
-         * Example: Add a new property to the user entity of the identity module
+        //OneTimeRunner.Run(() =>
+        //{
+        //    ObjectExtensionManager.Instance.Modules()
+        //        .ConfigureCmsKit(cmsKit =>
+        //        {
+        //            cmsKit.ConfigureBlog(plan => // extend the Blog entity
+        //            {
+        //                plan.AddOrUpdateProperty<string>( //property type: string
+        //                  "BlogDescription", //property name
+        //                  property => {
+        //                      //validation rules
+        //                      property.Attributes.Add(new RequiredAttribute()); //adds required attribute to the defined property
 
-           ObjectExtensionManager.Instance.Modules()
-              .ConfigureIdentity(identity =>
-              {
-                  identity.ConfigureUser(user =>
-                  {
-                      user.AddOrUpdateProperty<string>( //property type: string
-                          "SocialSecurityNumber", //property name
-                          property =>
-                          {
-                              //validation rules
-                              property.Attributes.Add(new RequiredAttribute());
-                              property.Attributes.Add(new StringLengthAttribute(64) {MinimumLength = 4});
-                              
-                              property.Configuration[IdentityModuleExtensionConsts.ConfigurationNames.AllowUserToEdit] = true;
+        //                      //...other configurations for this property
+        //                  }
+        //                );
+        //            });
 
-                              //...other configurations for this property
-                          }
-                      );
-                  });
-              });
+        //            cmsKit.ConfigureBlogPost(blogPost => // extend the BlogPost entity
+        //            {
+        //                blogPost.AddOrUpdateProperty<string>( //property type: string
+        //            "BlogPostDescription", //property name
+        //            property => {
+        //                //validation rules
+        //                        property.Attributes.Add(new RequiredAttribute()); //adds required attribute to the defined property
+        //                        property.Attributes.Add(
+        //                        new StringLengthAttribute(1000)
+        //                        {
+        //                            MinimumLength = 50
+        //                        }
+        //                        );
 
-         * See the documentation for more:
-         * https://docs.abp.io/en/abp/latest/Module-Entity-Extensions
-         */
+        //                //...other configurations for this property
+        //                    }
+        //            );
+        //            });
+        //        });
+        //});
     }
 }

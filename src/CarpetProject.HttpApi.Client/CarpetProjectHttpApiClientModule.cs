@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Account;
 using Volo.Abp.FeatureManagement;
 using Volo.Abp.Identity;
@@ -7,9 +7,12 @@ using Volo.Abp.PermissionManagement;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.VirtualFileSystem;
+using Volo.CmsKit;
+using EasyAbp.FileManagement;
+
 
 namespace CarpetProject;
-
+[DependsOn(typeof(FileManagementHttpApiClientModule))]
 [DependsOn(
     typeof(CarpetProjectApplicationContractsModule),
     typeof(AbpAccountHttpApiClientModule),
@@ -19,7 +22,8 @@ namespace CarpetProject;
     typeof(AbpFeatureManagementHttpApiClientModule),
     typeof(AbpSettingManagementHttpApiClientModule)
 )]
-public class CarpetProjectHttpApiClientModule : AbpModule
+[DependsOn(typeof(CmsKitHttpApiClientModule))]
+    public class CarpetProjectHttpApiClientModule : AbpModule
 {
     public const string RemoteServiceName = "Default";
 

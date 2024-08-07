@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Uow;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
@@ -12,9 +12,11 @@ using Volo.Abp.OpenIddict.EntityFrameworkCore;
 using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
+using Volo.CmsKit.EntityFrameworkCore;
+using EasyAbp.FileManagement.EntityFrameworkCore;
 
 namespace CarpetProject.EntityFrameworkCore;
-
+[DependsOn(typeof(FileManagementEntityFrameworkCoreModule))]
 [DependsOn(
     typeof(CarpetProjectDomainModule),
     typeof(AbpIdentityEntityFrameworkCoreModule),
@@ -27,7 +29,8 @@ namespace CarpetProject.EntityFrameworkCore;
     typeof(AbpTenantManagementEntityFrameworkCoreModule),
     typeof(AbpFeatureManagementEntityFrameworkCoreModule)
     )]
-public class CarpetProjectEntityFrameworkCoreModule : AbpModule
+[DependsOn(typeof(CmsKitEntityFrameworkCoreModule))]
+    public class CarpetProjectEntityFrameworkCoreModule : AbpModule
 {
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {

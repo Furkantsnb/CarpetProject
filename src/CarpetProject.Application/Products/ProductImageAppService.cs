@@ -1,4 +1,5 @@
 ﻿using CarpetProject.Entities.Products;
+using CarpetProject.EntityDto.ProductImages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,15 +11,43 @@ using Volo.Abp.Domain.Repositories;
 
 namespace CarpetProject.Products
 {
-    public class ProductImageAppService : CrudAppService<Product, ProductDto, int, PagedAndSortedResultRequestDto, CreateProductDto, UpdateProductDto>, IProductAppService
+    public class ProductImageAppService : CrudAppService<ProductImage, ProductImageDto, int, PagedAndSortedResultRequestDto, CreateProductImageDto, UpdateProductImageDto>, IProductImageAppService
     {
-        public ProductImageAppService(IRepository<Product, int> repository) : base(repository)
+        private readonly ProductImageManager _productImageManager;
+
+        public ProductImageAppService(IRepository<ProductImage, int> repository , ProductImageManager productImageManager) : base(repository)
         {
+            _productImageManager = productImageManager;
         }
 
-        public Task HartDeleteAsync(int id)
+        public override async Task<ProductImageDto> CreateAsync(CreateProductImageDto input)
         {
-            throw new NotImplementedException();
+            return await _productImageManager.CreateAsync(input);
+        }
+
+        public override async Task<ProductImageDto> UpdateAsync(int id, UpdateProductImageDto input)
+        {
+            return await _productImageManager.UpdateAsync(id, input);
+        }
+
+        public override async Task DeleteAsync(int id)
+        {
+            await _productImageManager.DeleteAsync(id);
+        }
+
+        public override async Task<ProductImageDto> GetAsync(int id)
+        {
+            return await _productImageManager.GetAsync(id);
+        }
+
+        public override Task<PagedResultDto<ProductImageDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        {
+            return base.GetListAsync(input);
+        }
+
+        public async Task HartDeleteAsync(int id)
+        {
+            await Repository.HardDeleteAsync(c => c.Id == id);
         }
     }
 }

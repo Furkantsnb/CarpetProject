@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using CarpetProject.MultiTenancy;
 using Volo.Abp.AuditLogging;
@@ -14,9 +14,11 @@ using Volo.Abp.PermissionManagement.Identity;
 using Volo.Abp.PermissionManagement.OpenIddict;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
+using Volo.CmsKit;
+using EasyAbp.FileManagement;
 
 namespace CarpetProject;
-
+[DependsOn(typeof(FileManagementDomainModule))]
 [DependsOn(
     typeof(CarpetProjectDomainSharedModule),
     typeof(AbpAuditLoggingDomainModule),
@@ -30,7 +32,8 @@ namespace CarpetProject;
     typeof(AbpTenantManagementDomainModule),
     typeof(AbpEmailingModule)
 )]
-public class CarpetProjectDomainModule : AbpModule
+[DependsOn(typeof(CmsKitDomainModule))]
+    public class CarpetProjectDomainModule : AbpModule
 {
     public override void ConfigureServices(ServiceConfigurationContext context)
     {

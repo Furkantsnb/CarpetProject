@@ -39,9 +39,18 @@ using Volo.Abp.UI.Navigation.Urls;
 using Volo.Abp.UI;
 using Volo.Abp.UI.Navigation;
 using Volo.Abp.VirtualFileSystem;
+using Volo.CmsKit.Web;
+using Volo.Abp.BlobStoring.Minio;
+using Volo.Abp.BlobStoring;
+using EasyAbp.FileManagement.Web;
+using EasyAbp.FileManagement.Containers;
+using EasyAbp.FileManagement.Files;
+using EasyAbp.FileManagement.Options;
+using EasyAbp.FileManagement.Options.Containers; // CommonFileContainer
+using Volo.Abp.BlobStoring; // LocalFileSystemBlobContainer
 
 namespace CarpetProject.Web;
-
+[DependsOn(typeof(FileManagementWebModule))]
 [DependsOn(
     typeof(CarpetProjectHttpApiModule),
     typeof(CarpetProjectApplicationModule),
@@ -55,8 +64,11 @@ namespace CarpetProject.Web;
     typeof(AbpAspNetCoreSerilogModule),
     typeof(AbpSwashbuckleModule)
     )]
-public class CarpetProjectWebModule : AbpModule
+[DependsOn(typeof(CmsKitWebModule))]
+    [DependsOn(typeof(AbpBlobStoringMinioModule))]
+    public class CarpetProjectWebModule : AbpModule
 {
+ 
     public override void PreConfigureServices(ServiceConfigurationContext context)
     {
         var hostingEnvironment = context.Services.GetHostingEnvironment();
@@ -111,6 +123,47 @@ public class CarpetProjectWebModule : AbpModule
         ConfigureNavigationServices();
         ConfigureAutoApiControllers();
         ConfigureSwaggerServices(context.Services);
+
+        Configure<AbpBlobStoringOptions>(options =>
+        {
+            options.Containers.ConfigureDefault(container =>
+            {
+                container.UseMinio(minio =>
+                {
+                    minio.EndPoint = "localhost:9000";
+                    minio.AccessKey = "E73pRFFqEERKYZe877yi";
+                    minio.SecretKey = "F13aoqjnqFGAE8srhnVy2pmb9T44OvDOrQPCtTOp";
+                    minio.BucketName = "furkan";
+                });
+            });
+        });
+
+        Configure<FileManagementOptions>(options =>
+        {
+            options.DefaultFileDownloadProviderType = typeof(LocalFileDownloadProvider);
+            options.Containers.Configure<CommonFileContainer>(container =>
+            {
+                // private container never be used by non-owner users (except user who has the "File.Manage" permission).
+                container.FileContainerType = FileContainerType.Public;
+                container.AbpBlobContainerName = BlobContainerNameAttribute.GetContainerName<LocalFileSystemBlobContainer>();
+                container.AbpBlobDirectorySeparator = "/";
+
+                container.RetainUnusedBlobs = false;
+                container.EnableAutoRename = true;
+
+                container.MaxByteSizeForEachFile = 5 * 1024 * 1024;
+                container.MaxByteSizeForEachUpload = 10 * 1024 * 1024;
+                container.MaxFileQuantityForEachUpload = 2;
+
+                container.AllowOnlyConfiguredFileExtensions = true;
+                container.FileExtensionsConfiguration.Add(".jpg", true);
+                container.FileExtensionsConfiguration.Add(".PNG", true);
+                // container.FileExtensionsConfiguration.Add(".tar.gz", true);
+                // container.FileExtensionsConfiguration.Add(".exe", false);
+
+                container.GetDownloadInfoTimesLimitEachUserPerMinute = 10;
+            });
+        });
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)
