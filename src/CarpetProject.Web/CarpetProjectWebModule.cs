@@ -43,6 +43,10 @@ using Volo.CmsKit.Web;
 using Volo.Abp.BlobStoring.Minio;
 using Volo.Abp.BlobStoring;
 using EasyAbp.FileManagement.Web;
+using EasyAbp.FileManagement.Options;
+using EasyAbp.FileManagement.Files;
+using EasyAbp.FileManagement;
+using EasyAbp.FileManagement.Containers;
 
 
 namespace CarpetProject.Web;
@@ -134,32 +138,32 @@ namespace CarpetProject.Web;
             });
         });
 
-    //    Configure<FileManagementOptions>(options =>
-    //    {
-    //        options.DefaultFileDownloadProviderType = typeof(LocalFileDownloadProvider);
-    //        options.Containers.Configure<CommonFileContainer>(container =>
-    //        {
-    //            // private container never be used by non-owner users (except user who has the "File.Manage" permission).
-    //            container.FileContainerType = FileContainerType.Public;
-    //            container.AbpBlobContainerName = BlobContainerNameAttribute.GetContainerName<LocalFileSystemBlobContainer>();
-    //            container.AbpBlobDirectorySeparator = "/";
+        Configure<FileManagementOptions>(options =>
+        {
+            options.DefaultFileDownloadProviderType = typeof(LocalFileDownloadProvider);
+            options.Containers.Configure<CommonFileContainer>(container =>
+            {
+                // private container never be used by non-owner users (except user who has the "File.Manage" permission).
+                container.FileContainerType = FileContainerType.Public;
+                container.AbpBlobContainerName = BlobContainerNameAttribute.GetContainerName<LocalFileSystemBlobContainer>();
+                container.AbpBlobDirectorySeparator = "/";
 
-    //            container.RetainUnusedBlobs = false;
-    //            container.EnableAutoRename = true;
+                container.RetainUnusedBlobs = false;
+                container.EnableAutoRename = true;
 
-    //            container.MaxByteSizeForEachFile = 5 * 1024 * 1024;
-    //            container.MaxByteSizeForEachUpload = 10 * 1024 * 1024;
-    //            container.MaxFileQuantityForEachUpload = 2;
+                container.MaxByteSizeForEachFile = 5 * 1024 * 1024;
+                container.MaxByteSizeForEachUpload = 10 * 1024 * 1024;
+                container.MaxFileQuantityForEachUpload = 2;
 
-    //            container.AllowOnlyConfiguredFileExtensions = true;
-    //            container.FileExtensionsConfiguration.Add(".jpg", true);
-    //            container.FileExtensionsConfiguration.Add(".PNG", true);
-    //            // container.FileExtensionsConfiguration.Add(".tar.gz", true);
-    //            // container.FileExtensionsConfiguration.Add(".exe", false);
+                container.AllowOnlyConfiguredFileExtensions = true;
+                container.FileExtensionsConfiguration.Add(".jpg", true);
+                container.FileExtensionsConfiguration.Add(".PNG", true);
+                // container.FileExtensionsConfiguration.Add(".tar.gz", true);
+                // container.FileExtensionsConfiguration.Add(".exe", false);
 
-    //            container.GetDownloadInfoTimesLimitEachUserPerMinute = 10;
-    //        });
-    //    });
+                container.GetDownloadInfoTimesLimitEachUserPerMinute = 10;
+            });
+        });
     }
 
     private void ConfigureAuthentication(ServiceConfigurationContext context)
