@@ -1,5 +1,4 @@
 using CarpetProject.Localization;
-using EasyAbp.FileManagement;
 using Volo.Abp.AuditLogging;
 using Volo.Abp.BackgroundJobs;
 using Volo.Abp.FeatureManagement;
@@ -16,7 +15,7 @@ using Volo.Abp.VirtualFileSystem;
 using Volo.CmsKit;
 
 namespace CarpetProject;
-[DependsOn(typeof(FileManagementDomainSharedModule))]
+
 [DependsOn(
     typeof(AbpAuditLoggingDomainSharedModule),
     typeof(AbpBackgroundJobsDomainSharedModule),

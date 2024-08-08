@@ -9,11 +9,11 @@ using Volo.Abp.PermissionManagement.HttpApi;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
 using Volo.CmsKit;
-using EasyAbp.FileManagement;
+
 
 
 namespace CarpetProject;
-[DependsOn(typeof(FileManagementHttpApiModule))]
+
 [DependsOn(
     typeof(CarpetProjectApplicationContractsModule),
     typeof(AbpAccountHttpApiModule),

@@ -37,50 +37,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarpetProject.HttpApi.Clien
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CarpetProject.DbMigrator", "src\CarpetProject.DbMigrator\CarpetProject.DbMigrator.csproj", "{AA94D832-1CCC-4715-95A9-A483F23A1A5D}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "modules", "modules", "{75600CD0-FE4D-4FAB-BA6D-87374CB165CD}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "host", "host", "{B4BC2A67-FACF-4FB1-9CFD-DD87CAFF6196}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{66EA63A3-3052-4C2B-93B6-97D80997718E}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{D1714231-A589-44DE-82F7-B691689484BB}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.Host.Shared", "..\FileManagement\host\EasyAbp.FileManagement.Host.Shared\EasyAbp.FileManagement.Host.Shared.csproj", "{68A13583-5B1F-4F29-86C0-E92999286964}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.HttpApi.Host", "..\FileManagement\host\EasyAbp.FileManagement.HttpApi.Host\EasyAbp.FileManagement.HttpApi.Host.csproj", "{06D44862-EC21-4B9C-87B1-7767A3D04C16}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.Web.Host", "..\FileManagement\host\EasyAbp.FileManagement.Web.Host\EasyAbp.FileManagement.Web.Host.csproj", "{733541BF-0E4D-4F14-9F84-68A1B2CB050E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.Web.Unified", "..\FileManagement\host\EasyAbp.FileManagement.Web.Unified\EasyAbp.FileManagement.Web.Unified.csproj", "{9FA5B240-C180-481A-9D29-37C0D7309552}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.Domain.Shared", "..\FileManagement\src\EasyAbp.FileManagement.Domain.Shared\EasyAbp.FileManagement.Domain.Shared.csproj", "{63D8221A-17FD-4AA6-ABB3-2FBF6C1B2A92}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.Domain", "..\FileManagement\src\EasyAbp.FileManagement.Domain\EasyAbp.FileManagement.Domain.csproj", "{2639607E-52CD-4045-82FE-476DBBE27ECD}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.Domain.Core", "..\FileManagement\src\EasyAbp.FileManagement.Domain.Core\EasyAbp.FileManagement.Domain.Core.csproj", "{45AAFA39-5427-466D-A20A-AC8E5E729BAC}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.Application.Contracts", "..\FileManagement\src\EasyAbp.FileManagement.Application.Contracts\EasyAbp.FileManagement.Application.Contracts.csproj", "{07441053-E261-4B07-82AE-37A017FAE272}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.Application", "..\FileManagement\src\EasyAbp.FileManagement.Application\EasyAbp.FileManagement.Application.csproj", "{323C4640-B12E-4CC9-8AF4-BBCA6842DBBD}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.EntityFrameworkCore", "..\FileManagement\src\EasyAbp.FileManagement.EntityFrameworkCore\EasyAbp.FileManagement.EntityFrameworkCore.csproj", "{DFD2C294-BE0E-4A68-8D7D-67BD89DBD302}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.HttpApi", "..\FileManagement\src\EasyAbp.FileManagement.HttpApi\EasyAbp.FileManagement.HttpApi.csproj", "{4D23F4C4-09B1-4354-99B3-82FBBCB9948E}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.HttpApi.Client", "..\FileManagement\src\EasyAbp.FileManagement.HttpApi.Client\EasyAbp.FileManagement.HttpApi.Client.csproj", "{61397135-386F-4F53-86E6-33437CCD628A}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.Web", "..\FileManagement\src\EasyAbp.FileManagement.Web\EasyAbp.FileManagement.Web.csproj", "{C37E8392-AD4F-4DE6-B8C5-5F900631E6C7}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.Application.Tests", "..\FileManagement\test\EasyAbp.FileManagement.Application.Tests\EasyAbp.FileManagement.Application.Tests.csproj", "{5DC80160-3AAA-4D80-A74F-71F71CC30CBF}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.Domain.Tests", "..\FileManagement\test\EasyAbp.FileManagement.Domain.Tests\EasyAbp.FileManagement.Domain.Tests.csproj", "{12D3447F-12C8-43CD-A9D3-2EE1FAA8D3FB}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.EntityFrameworkCore.Tests", "..\FileManagement\test\EasyAbp.FileManagement.EntityFrameworkCore.Tests\EasyAbp.FileManagement.EntityFrameworkCore.Tests.csproj", "{40290967-5C55-4EEF-986E-0ECBF1831196}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.HttpApi.Client.ConsoleTestApp", "..\FileManagement\test\EasyAbp.FileManagement.HttpApi.Client.ConsoleTestApp\EasyAbp.FileManagement.HttpApi.Client.ConsoleTestApp.csproj", "{3F0CD481-492E-4005-9DA0-CB97BE170B9F}"
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EasyAbp.FileManagement.TestBase", "..\FileManagement\test\EasyAbp.FileManagement.TestBase\EasyAbp.FileManagement.TestBase.csproj", "{DC295A63-8AC0-4319-B9E6-103E13A5FC0E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,78 +103,6 @@ Global
 		{AA94D832-1CCC-4715-95A9-A483F23A1A5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA94D832-1CCC-4715-95A9-A483F23A1A5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA94D832-1CCC-4715-95A9-A483F23A1A5D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{68A13583-5B1F-4F29-86C0-E92999286964}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{68A13583-5B1F-4F29-86C0-E92999286964}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{68A13583-5B1F-4F29-86C0-E92999286964}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{68A13583-5B1F-4F29-86C0-E92999286964}.Release|Any CPU.Build.0 = Release|Any CPU
-		{06D44862-EC21-4B9C-87B1-7767A3D04C16}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{06D44862-EC21-4B9C-87B1-7767A3D04C16}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{06D44862-EC21-4B9C-87B1-7767A3D04C16}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{06D44862-EC21-4B9C-87B1-7767A3D04C16}.Release|Any CPU.Build.0 = Release|Any CPU
-		{733541BF-0E4D-4F14-9F84-68A1B2CB050E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{733541BF-0E4D-4F14-9F84-68A1B2CB050E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{733541BF-0E4D-4F14-9F84-68A1B2CB050E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{733541BF-0E4D-4F14-9F84-68A1B2CB050E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9FA5B240-C180-481A-9D29-37C0D7309552}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9FA5B240-C180-481A-9D29-37C0D7309552}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9FA5B240-C180-481A-9D29-37C0D7309552}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9FA5B240-C180-481A-9D29-37C0D7309552}.Release|Any CPU.Build.0 = Release|Any CPU
-		{63D8221A-17FD-4AA6-ABB3-2FBF6C1B2A92}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{63D8221A-17FD-4AA6-ABB3-2FBF6C1B2A92}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{63D8221A-17FD-4AA6-ABB3-2FBF6C1B2A92}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{63D8221A-17FD-4AA6-ABB3-2FBF6C1B2A92}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2639607E-52CD-4045-82FE-476DBBE27ECD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2639607E-52CD-4045-82FE-476DBBE27ECD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2639607E-52CD-4045-82FE-476DBBE27ECD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2639607E-52CD-4045-82FE-476DBBE27ECD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{45AAFA39-5427-466D-A20A-AC8E5E729BAC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{45AAFA39-5427-466D-A20A-AC8E5E729BAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{45AAFA39-5427-466D-A20A-AC8E5E729BAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{45AAFA39-5427-466D-A20A-AC8E5E729BAC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{07441053-E261-4B07-82AE-37A017FAE272}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{07441053-E261-4B07-82AE-37A017FAE272}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{07441053-E261-4B07-82AE-37A017FAE272}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{07441053-E261-4B07-82AE-37A017FAE272}.Release|Any CPU.Build.0 = Release|Any CPU
-		{323C4640-B12E-4CC9-8AF4-BBCA6842DBBD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{323C4640-B12E-4CC9-8AF4-BBCA6842DBBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{323C4640-B12E-4CC9-8AF4-BBCA6842DBBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{323C4640-B12E-4CC9-8AF4-BBCA6842DBBD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DFD2C294-BE0E-4A68-8D7D-67BD89DBD302}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DFD2C294-BE0E-4A68-8D7D-67BD89DBD302}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DFD2C294-BE0E-4A68-8D7D-67BD89DBD302}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DFD2C294-BE0E-4A68-8D7D-67BD89DBD302}.Release|Any CPU.Build.0 = Release|Any CPU
-		{4D23F4C4-09B1-4354-99B3-82FBBCB9948E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{4D23F4C4-09B1-4354-99B3-82FBBCB9948E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{4D23F4C4-09B1-4354-99B3-82FBBCB9948E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{4D23F4C4-09B1-4354-99B3-82FBBCB9948E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{61397135-386F-4F53-86E6-33437CCD628A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{61397135-386F-4F53-86E6-33437CCD628A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{61397135-386F-4F53-86E6-33437CCD628A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{61397135-386F-4F53-86E6-33437CCD628A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C37E8392-AD4F-4DE6-B8C5-5F900631E6C7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C37E8392-AD4F-4DE6-B8C5-5F900631E6C7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C37E8392-AD4F-4DE6-B8C5-5F900631E6C7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C37E8392-AD4F-4DE6-B8C5-5F900631E6C7}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5DC80160-3AAA-4D80-A74F-71F71CC30CBF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5DC80160-3AAA-4D80-A74F-71F71CC30CBF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5DC80160-3AAA-4D80-A74F-71F71CC30CBF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5DC80160-3AAA-4D80-A74F-71F71CC30CBF}.Release|Any CPU.Build.0 = Release|Any CPU
-		{12D3447F-12C8-43CD-A9D3-2EE1FAA8D3FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{12D3447F-12C8-43CD-A9D3-2EE1FAA8D3FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{12D3447F-12C8-43CD-A9D3-2EE1FAA8D3FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{12D3447F-12C8-43CD-A9D3-2EE1FAA8D3FB}.Release|Any CPU.Build.0 = Release|Any CPU
-		{40290967-5C55-4EEF-986E-0ECBF1831196}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{40290967-5C55-4EEF-986E-0ECBF1831196}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{40290967-5C55-4EEF-986E-0ECBF1831196}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{40290967-5C55-4EEF-986E-0ECBF1831196}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3F0CD481-492E-4005-9DA0-CB97BE170B9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3F0CD481-492E-4005-9DA0-CB97BE170B9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3F0CD481-492E-4005-9DA0-CB97BE170B9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3F0CD481-492E-4005-9DA0-CB97BE170B9F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DC295A63-8AC0-4319-B9E6-103E13A5FC0E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DC295A63-8AC0-4319-B9E6-103E13A5FC0E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DC295A63-8AC0-4319-B9E6-103E13A5FC0E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DC295A63-8AC0-4319-B9E6-103E13A5FC0E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -239,27 +123,6 @@ Global
 		{E512F4D9-9375-480F-A2F6-A46509F9D824} = {04DBDB01-70F4-4E06-B468-8F87850B22BE}
 		{EF480016-9127-4916-8735-D2466BDBC582} = {04DBDB01-70F4-4E06-B468-8F87850B22BE}
 		{AA94D832-1CCC-4715-95A9-A483F23A1A5D} = {CA9AC87F-097E-4F15-8393-4BC07735A5B0}
-		{B4BC2A67-FACF-4FB1-9CFD-DD87CAFF6196} = {75600CD0-FE4D-4FAB-BA6D-87374CB165CD}
-		{66EA63A3-3052-4C2B-93B6-97D80997718E} = {75600CD0-FE4D-4FAB-BA6D-87374CB165CD}
-		{D1714231-A589-44DE-82F7-B691689484BB} = {75600CD0-FE4D-4FAB-BA6D-87374CB165CD}
-		{68A13583-5B1F-4F29-86C0-E92999286964} = {B4BC2A67-FACF-4FB1-9CFD-DD87CAFF6196}
-		{06D44862-EC21-4B9C-87B1-7767A3D04C16} = {B4BC2A67-FACF-4FB1-9CFD-DD87CAFF6196}
-		{733541BF-0E4D-4F14-9F84-68A1B2CB050E} = {B4BC2A67-FACF-4FB1-9CFD-DD87CAFF6196}
-		{9FA5B240-C180-481A-9D29-37C0D7309552} = {B4BC2A67-FACF-4FB1-9CFD-DD87CAFF6196}
-		{63D8221A-17FD-4AA6-ABB3-2FBF6C1B2A92} = {66EA63A3-3052-4C2B-93B6-97D80997718E}
-		{2639607E-52CD-4045-82FE-476DBBE27ECD} = {66EA63A3-3052-4C2B-93B6-97D80997718E}
-		{45AAFA39-5427-466D-A20A-AC8E5E729BAC} = {66EA63A3-3052-4C2B-93B6-97D80997718E}
-		{07441053-E261-4B07-82AE-37A017FAE272} = {66EA63A3-3052-4C2B-93B6-97D80997718E}
-		{323C4640-B12E-4CC9-8AF4-BBCA6842DBBD} = {66EA63A3-3052-4C2B-93B6-97D80997718E}
-		{DFD2C294-BE0E-4A68-8D7D-67BD89DBD302} = {66EA63A3-3052-4C2B-93B6-97D80997718E}
-		{4D23F4C4-09B1-4354-99B3-82FBBCB9948E} = {66EA63A3-3052-4C2B-93B6-97D80997718E}
-		{61397135-386F-4F53-86E6-33437CCD628A} = {66EA63A3-3052-4C2B-93B6-97D80997718E}
-		{C37E8392-AD4F-4DE6-B8C5-5F900631E6C7} = {66EA63A3-3052-4C2B-93B6-97D80997718E}
-		{5DC80160-3AAA-4D80-A74F-71F71CC30CBF} = {D1714231-A589-44DE-82F7-B691689484BB}
-		{12D3447F-12C8-43CD-A9D3-2EE1FAA8D3FB} = {D1714231-A589-44DE-82F7-B691689484BB}
-		{40290967-5C55-4EEF-986E-0ECBF1831196} = {D1714231-A589-44DE-82F7-B691689484BB}
-		{3F0CD481-492E-4005-9DA0-CB97BE170B9F} = {D1714231-A589-44DE-82F7-B691689484BB}
-		{DC295A63-8AC0-4319-B9E6-103E13A5FC0E} = {D1714231-A589-44DE-82F7-B691689484BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {28315BFD-90E7-4E14-A2EA-F3D23AF4126F}

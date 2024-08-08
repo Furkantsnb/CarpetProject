@@ -1,4 +1,4 @@
-using EasyAbp.FileManagement;
+
 using Volo.Abp.Account;
 using Volo.Abp.AutoMapper;
 using Volo.Abp.FeatureManagement;
@@ -10,7 +10,7 @@ using Volo.Abp.TenantManagement;
 using Volo.CmsKit;
 
 namespace CarpetProject;
-[DependsOn(typeof(FileManagementApplicationModule))]
+
 [DependsOn(
     typeof(CarpetProjectDomainModule),
     typeof(AbpAccountApplicationModule),

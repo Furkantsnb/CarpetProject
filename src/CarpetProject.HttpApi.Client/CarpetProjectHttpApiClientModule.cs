@@ -8,12 +8,12 @@ using Volo.Abp.TenantManagement;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.VirtualFileSystem;
 using Volo.CmsKit;
-using EasyAbp.FileManagement;
+
 
 
 
 namespace CarpetProject;
-[DependsOn(typeof(FileManagementHttpApiClientModule))]
+
 [DependsOn(
     typeof(CarpetProjectApplicationContractsModule),
     typeof(AbpAccountHttpApiClientModule),

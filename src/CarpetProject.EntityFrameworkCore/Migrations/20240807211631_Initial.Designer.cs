@@ -13,8 +13,8 @@ using Volo.Abp.EntityFrameworkCore;
 namespace CarpetProject.Migrations
 {
     [DbContext(typeof(CarpetProjectDbContext))]
-    [Migration("20240807173217_mig1")]
-    partial class mig1
+    [Migration("20240807211631_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
