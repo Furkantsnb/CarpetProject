@@ -11,7 +11,7 @@ namespace CarpetProject.Products
     {
         public int ProductId { get; set; }
         public string ImageUrl { get; set; }
-
+       // public int Order { get; set; } // Görsel sırası
         public virtual Product Product { get; set; }
     }
 }

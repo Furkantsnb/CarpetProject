@@ -72,5 +72,7 @@ namespace CarpetProject.Products
                 productImageDtos
             );
         }
+
+       
     }
 }
