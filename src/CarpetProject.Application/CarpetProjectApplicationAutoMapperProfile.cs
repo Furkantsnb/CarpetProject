@@ -3,6 +3,7 @@ using CarpetProject.Categories;
 using CarpetProject.Entities.Categories;
 using CarpetProject.Entities.Products;
 using CarpetProject.EntityDto.ProductImages;
+using CarpetProject.EntityDtos.Tags;
 using CarpetProject.Products;
 using System.Linq;
 
@@ -25,6 +26,9 @@ public class CarpetProjectApplicationAutoMapperProfile : Profile
         CreateMap<Category, CreateCategoryDto>().ReverseMap();
         CreateMap<Category, UpdateCategoryDto>().ReverseMap();
 
+        CreateMap<Tag, TagDto>().ReverseMap();
+        CreateMap<Tag, CreateTagDto>().ReverseMap();
+        CreateMap<Tag, UpdateTagDto>().ReverseMap();
 
 
 
