@@ -3,6 +3,7 @@ using CarpetProject.Products;
 
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Reflection.Emit;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
 using Volo.Abp.Data;
@@ -60,6 +61,7 @@ public class CarpetProjectDbContext :
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductImage> ProductImages { get; set; }
+    public DbSet<Tag> Tags { get; set; }
 
     #endregion
 
@@ -83,7 +85,7 @@ public class CarpetProjectDbContext :
         builder.ConfigureOpenIddict();
         builder.ConfigureFeatureManagement();
         builder.ConfigureTenantManagement();
-        
+
 
         /* Configure your own tables/entities inside here */
 
@@ -93,61 +95,25 @@ public class CarpetProjectDbContext :
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
+        // Product ve Category arasýnda çoka çok iliþki
+        builder.Entity<Product>()
+            .HasMany(p => p.Categories)
+            .WithMany(c => c.Products)
+            .UsingEntity(j => j.ToTable("ProductCategories")); // Ara tablo ismi
 
-        builder.Entity<Product>(entity =>
-        {
-            entity.HasMany(e => e.ProductImages)
-                .WithOne(e => e.Product)
-                .HasForeignKey(e => e.ProductId);
-        });
+        // Product ve ProductImage arasýnda bire çok iliþki
+        builder.Entity<Product>()
+            .HasMany(p => p.ProductImages)
+            .WithOne(pi => pi.Product)
+            .HasForeignKey(pi => pi.ProductId)
+            .OnDelete(DeleteBehavior.Cascade);
 
-        builder.Entity<Product>(b =>
-        {
-            b.ToTable(CarpetProjectConsts.DbTablePrefix + "Products", CarpetProjectConsts.DbSchema);
-            b.ConfigureByConvention();
-            b.Property(x => x.Name).IsRequired().HasMaxLength(128);
-            b.Property(x => x.Price).HasColumnType("decimal(18,2)");
+        // Product ve Tag arasýnda çoka çok iliþki
+        builder.Entity<Product>()
+            .HasMany(p => p.Tags)
+            .WithMany(t => t.Products)
+            .UsingEntity(j => j.ToTable("ProductTags")); // Ara tablo ismi
 
-            b.HasMany(x => x.Categories)
-             .WithMany(x => x.Products)
-             .UsingEntity<Dictionary<string, object>>(
-                 "ProductCategory",
-                 j => j
-                      .HasOne<Category>()
-                      .WithMany()
-                      .HasForeignKey("CategoryId")
-                      .OnDelete(DeleteBehavior.Cascade),
-                 j => j
-                      .HasOne<Product>()
-                      .WithMany()
-                      .HasForeignKey("ProductId")
-                      .OnDelete(DeleteBehavior.Cascade)
-             );
-        });
-
-        builder.Entity<Category>(b =>
-        {
-            b.ToTable(CarpetProjectConsts.DbTablePrefix + "Categories", CarpetProjectConsts.DbSchema);
-            b.ConfigureByConvention();
-            b.Property(x => x.Name).IsRequired().HasMaxLength(128);
-            b.HasMany(x => x.SubCategories).WithOne(x => x.ParentCategory).HasForeignKey(x => x.ParentCategoryId);
-
-            b.HasMany(x => x.Products)
-             .WithMany(x => x.Categories)
-             .UsingEntity<Dictionary<string, object>>(
-                 "ProductCategory",
-                 j => j
-                      .HasOne<Product>()
-                      .WithMany()
-                      .HasForeignKey("ProductId")
-                      .OnDelete(DeleteBehavior.Cascade),
-                 j => j
-                      .HasOne<Category>()
-                      .WithMany()
-                      .HasForeignKey("CategoryId")
-                      .OnDelete(DeleteBehavior.Cascade)
-             );
-        });
         builder.ConfigureCmsKit();
         }
 }
