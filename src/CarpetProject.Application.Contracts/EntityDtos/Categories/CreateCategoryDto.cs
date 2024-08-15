@@ -13,6 +13,7 @@ namespace CarpetProject.Entities.Categories
         public string Image { get; set; }
         public int? ParentCategoryId { get; set; }
         public bool IsApproved { get; set; }//Aktif mi değilmi Kontrolü
+        public string ColorCode { get; set; } // Renk kodu
         public List<CategoryDto> SubCategories { get; set; }
     }
 }

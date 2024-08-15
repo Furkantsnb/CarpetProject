@@ -1,4 +1,6 @@
-﻿using CarpetProject.EntityDto.ProductImages;
+﻿using CarpetProject.Entities.Categories;
+using CarpetProject.EntityDto.ProductImages;
+using CarpetProject.EntityDtos.Tags;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,8 +23,10 @@ namespace CarpetProject.Entities.Products
         public DateTime ReleaseDate { get; set; } // Ürünün piyasaya çıkış tarihi
 
 
-        public List<int> CategoryIds { get; set; }
+        public List<CreateCategoryDto> CategoryIds { get; set; }
         public List<CreateProductImageDto> ProductImages { get; set; }
-     
+        public List<CreateTagDto> Tags { get; set; }
+
+
     }
 }
