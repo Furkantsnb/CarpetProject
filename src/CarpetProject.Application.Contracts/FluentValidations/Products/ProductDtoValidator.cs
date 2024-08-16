@@ -8,11 +8,10 @@ using System.Threading.Tasks;
 
 namespace CarpetProject.FluentValidations.Products
 {
-    public class CreateProductDtoValidator : AbstractValidator<CreateProductDto>
+    public class ProductDtoValidator : AbstractValidator<ProductDto>
     {
-        public CreateProductDtoValidator()
+        public ProductDtoValidator()
         {
-
 
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Ürün adı gereklidir.")
@@ -32,7 +31,7 @@ namespace CarpetProject.FluentValidations.Products
                 .NotEmpty().WithMessage("En az bir ürün görseli gereklidir.")
                 .ForEach(image => image
                     .Must(img => IsValidUrl(img.ImageUrl)).WithMessage("Her ürün görseli geçerli bir URL formatında olmalıdır."));
-                    
+
 
             RuleFor(x => x.IsApproved)
                 .NotNull().WithMessage("Onay durumu gereklidir.")
@@ -41,7 +40,7 @@ namespace CarpetProject.FluentValidations.Products
             RuleFor(x => x.Tags)
                 .NotEmpty().WithMessage("En az bir etiket gereklidir.");
 
-            RuleFor(x => x.CategoryIds)
+            RuleFor(x => x.Categories)
                 .NotEmpty().WithMessage("En az bir kategori atanmalıdır.")
                 .Must(cIds => cIds.Count > 0).WithMessage("En az bir kategori atanmalıdır.");
 
