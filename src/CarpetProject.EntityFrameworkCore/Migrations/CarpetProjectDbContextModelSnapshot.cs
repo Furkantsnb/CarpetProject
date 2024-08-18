@@ -102,9 +102,6 @@ namespace CarpetProject.Migrations
                     b.Property<string>("AdditionalInfo")
                         .HasColumnType("text");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("integer");
-
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("CreationTime");
@@ -215,16 +212,13 @@ namespace CarpetProject.Migrations
                     b.ToTable("ProductImages");
                 });
 
-            modelBuilder.Entity("CarpetProject.Products.Tag", b =>
+            modelBuilder.Entity("CarpetProject.Products.certificate", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Color")
-                        .HasColumnType("text");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("timestamp without time zone")
@@ -241,9 +235,6 @@ namespace CarpetProject.Migrations
                     b.Property<DateTime?>("DeletionTime")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("DeletionTime");
-
-                    b.Property<string>("IconUrl")
-                        .HasColumnType("text");
 
                     b.Property<bool>("IsDeleted")
                         .ValueGeneratedOnAdd()
@@ -265,7 +256,7 @@ namespace CarpetProject.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Tags");
+                    b.ToTable("Certificates");
                 });
 
             modelBuilder.Entity("CategoryProduct", b =>
@@ -283,19 +274,19 @@ namespace CarpetProject.Migrations
                     b.ToTable("ProductCategories", (string)null);
                 });
 
-            modelBuilder.Entity("ProductTag", b =>
+            modelBuilder.Entity("Productcertificate", b =>
                 {
+                    b.Property<int>("CertificatesId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("ProductsId")
                         .HasColumnType("integer");
 
-                    b.Property<int>("TagsId")
-                        .HasColumnType("integer");
+                    b.HasKey("CertificatesId", "ProductsId");
 
-                    b.HasKey("ProductsId", "TagsId");
+                    b.HasIndex("ProductsId");
 
-                    b.HasIndex("TagsId");
-
-                    b.ToTable("ProductTags", (string)null);
+                    b.ToTable("Productcertificate");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
@@ -2947,17 +2938,17 @@ namespace CarpetProject.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("ProductTag", b =>
+            modelBuilder.Entity("Productcertificate", b =>
                 {
-                    b.HasOne("CarpetProject.Products.Product", null)
+                    b.HasOne("CarpetProject.Products.certificate", null)
                         .WithMany()
-                        .HasForeignKey("ProductsId")
+                        .HasForeignKey("CertificatesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("CarpetProject.Products.Tag", null)
+                    b.HasOne("CarpetProject.Products.Product", null)
                         .WithMany()
-                        .HasForeignKey("TagsId")
+                        .HasForeignKey("ProductsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

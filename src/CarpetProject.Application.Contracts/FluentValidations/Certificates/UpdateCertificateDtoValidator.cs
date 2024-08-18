@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace CarpetProject.FluentValidations.Tags
 {
-    public class CreateTagDtoValidator : AbstractValidator<TagDto>
+    public class UpdateCertificateDtoValidator : AbstractValidator<CertificateDto>
     {
-        public CreateTagDtoValidator()
+        public UpdateCertificateDtoValidator()
         {
             // Name alanı zorunludur ve en az 3, en fazla 50 karakter olmalıdır
             RuleFor(x => x.Name)

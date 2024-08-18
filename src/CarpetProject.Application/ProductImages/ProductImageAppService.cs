@@ -1,5 +1,6 @@
 ﻿using CarpetProject.Entities.Products;
 using CarpetProject.EntityDto.ProductImages;
+using CarpetProject.Products;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,13 @@ using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 
-namespace CarpetProject.Products
+namespace CarpetProject.ProductImages
 {
     public class ProductImageAppService : CrudAppService<ProductImage, ProductImageDto, int, PagedAndSortedResultRequestDto, CreateProductImageDto, UpdateProductImageDto>, IProductImageAppService
     {
         private readonly ProductImageManager _productImageManager;
 
-        public ProductImageAppService(IRepository<ProductImage, int> repository , ProductImageManager productImageManager) : base(repository)
+        public ProductImageAppService(IRepository<ProductImage, int> repository, ProductImageManager productImageManager) : base(repository)
         {
             _productImageManager = productImageManager;
         }

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarpetProject.EntityDtos.Tags
 {
-    public class CreateTagDto
+    public class CreateCertificateDto
     {
         public string Name { get; set; } // Etiket adı
         public string? Color { get; set; } // Opsiyonel: Etiket rengi (örneğin, #FF5733)

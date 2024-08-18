@@ -26,9 +26,9 @@ public class CarpetProjectApplicationAutoMapperProfile : Profile
         CreateMap<Category, CreateCategoryDto>().ReverseMap();
         CreateMap<Category, UpdateCategoryDto>().ReverseMap();
 
-        CreateMap<Tag, TagDto>().ReverseMap();
-        CreateMap<Tag, CreateTagDto>().ReverseMap();
-        CreateMap<Tag, UpdateTagDto>().ReverseMap();
+        CreateMap<certificate, CertificateDto>().ReverseMap();
+        CreateMap<certificate, CreateCertificateDto>().ReverseMap();
+        CreateMap<certificate, UpdateCertificateDto>().ReverseMap();
 
 
 

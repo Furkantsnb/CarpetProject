@@ -24,6 +24,6 @@ namespace CarpetProject.Entities.Products
 
         public List<UpdateCategoryDto> Categories { get; set; } // Kategoriler listesi
         public List<UpdateProductImageDto> ProductImages { get; set; }
-        public List<UpdateTagDto> Tags { get; set; } // Etiketler listesi
+        public List<UpdateCertificateDto> Tags { get; set; } // Etiketler listesi
     }
 }

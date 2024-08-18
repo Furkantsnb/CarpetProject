@@ -18,6 +18,7 @@ using Volo.Abp.PermissionManagement.EntityFrameworkCore;
 using Volo.Abp.SettingManagement.EntityFrameworkCore;
 using Volo.Abp.TenantManagement;
 using Volo.Abp.TenantManagement.EntityFrameworkCore;
+using Volo.CmsKit.Comments;
 using Volo.CmsKit.EntityFrameworkCore;
 
 namespace CarpetProject.EntityFrameworkCore;
@@ -61,7 +62,7 @@ public class CarpetProjectDbContext :
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductImage> ProductImages { get; set; }
-    public DbSet<Tag> Tags { get; set; }
+    public DbSet<certificate> Certificates { get; set; }
 
     #endregion
 
@@ -87,14 +88,7 @@ public class CarpetProjectDbContext :
         builder.ConfigureTenantManagement();
 
 
-        /* Configure your own tables/entities inside here */
-
-        //builder.Entity<YourEntity>(b =>
-        //{
-        //    b.ToTable(CarpetProjectConsts.DbTablePrefix + "YourEntities", CarpetProjectConsts.DbSchema);
-        //    b.ConfigureByConvention(); //auto configure for the base class props
-        //    //...
-        //});
+        
         // Product ve Category arasýnda çoka çok iliþki
         builder.Entity<Product>()
             .HasMany(p => p.Categories)
@@ -108,11 +102,7 @@ public class CarpetProjectDbContext :
             .HasForeignKey(pi => pi.ProductId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // Product ve Tag arasýnda çoka çok iliþki
-        builder.Entity<Product>()
-            .HasMany(p => p.Tags)
-            .WithMany(t => t.Products)
-            .UsingEntity(j => j.ToTable("ProductTags")); // Ara tablo ismi
+
 
         builder.ConfigureCmsKit();
         }

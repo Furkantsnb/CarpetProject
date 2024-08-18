@@ -56,7 +56,9 @@ namespace CarpetProject.Products
         public async Task<PagedResultDto<ProductDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
             var queryable = await _productRepository.GetQueryableAsync();
+            
             var totalCount = await AsyncExecuter.CountAsync(queryable);
+            
 
             var lines = await AsyncExecuter.ToListAsync(
                 queryable.OrderBy(a => a.Name)

@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using Volo.Abp.Identity;
 using Volo.Abp.ObjectExtending;
 using Volo.Abp.Threading;
@@ -42,38 +44,31 @@ public static class CarpetProjectModuleExtensionConfigurator
         //    ObjectExtensionManager.Instance.Modules()
         //        .ConfigureCmsKit(cmsKit =>
         //        {
-        //            cmsKit.ConfigureBlog(plan => // extend the Blog entity
+        //            // Tag entity'sine ProductId özelliğini ekleyin
+        //            cmsKit.ConfigureTag(tag =>
         //            {
-        //                plan.AddOrUpdateProperty<string>( //property type: string
-        //                  "BlogDescription", //property name
-        //                  property => {
-        //                      //validation rules
-        //                      property.Attributes.Add(new RequiredAttribute()); //adds required attribute to the defined property
-
-        //                      //...other configurations for this property
-        //                  }
+        //                tag.AddOrUpdateProperty<List<int>>(
+        //                    "ProductIds",
+        //                    property =>
+        //                    {
+        //                        property.Attributes.Add(new RequiredAttribute());
+        //                    }
         //                );
         //            });
 
-        //            cmsKit.ConfigureBlogPost(blogPost => // extend the BlogPost entity
+        //            // Comment entity'sine ProductId özelliğini ekleyin
+        //            cmsKit.ConfigureComment(comment =>
         //            {
-        //                blogPost.AddOrUpdateProperty<string>( //property type: string
-        //            "BlogPostDescription", //property name
-        //            property => {
-        //                //validation rules
-        //                        property.Attributes.Add(new RequiredAttribute()); //adds required attribute to the defined property
-        //                        property.Attributes.Add(
-        //                        new StringLengthAttribute(1000)
-        //                        {
-        //                            MinimumLength = 50
-        //                        }
-        //                        );
-
-        //                //...other configurations for this property
+        //                comment.AddOrUpdateProperty<int?>(
+        //                    "ProductId",
+        //                    property =>
+        //                    {
+        //                        property.Attributes.Add(new RequiredAttribute());
         //                    }
-        //            );
+        //                );
         //            });
         //        });
         //});
+
     }
 }

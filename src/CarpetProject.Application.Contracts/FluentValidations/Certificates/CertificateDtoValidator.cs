@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace CarpetProject.FluentValidations.Tags
 {
-    public class UpdateTagDtoValidator : AbstractValidator<TagDto>
+    public class CertificateDtoValidator:AbstractValidator<CertificateDto>
     {
-        public UpdateTagDtoValidator()
+        public CertificateDtoValidator() 
         {
             // Name alanı zorunludur ve en az 3, en fazla 50 karakter olmalıdır
             RuleFor(x => x.Name)
@@ -31,7 +31,6 @@ namespace CarpetProject.FluentValidations.Tags
                 .WithMessage("IconUrl geçerli bir URL olmalıdır.")
                 .When(x => !string.IsNullOrEmpty(x.IconUrl));
         }
-
         // Geçerli bir URL olup olmadığını kontrol eden bir yardımcı metot
         private bool IsValidUrl(string url)
         {

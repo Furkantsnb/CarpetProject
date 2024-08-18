@@ -1,17 +1,21 @@
 ﻿using CarpetProject.Categories;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Entities.Auditing;
-using Volo.Abp.MultiTenancy;
+using Volo.CmsKit.Blogs;
+using Volo.CmsKit.Comments;
+using Volo.CmsKit.Tags;
+
 
 namespace CarpetProject.Products
 {
     public class Product : FullAuditedEntity<int>
     {
-        public int CategoryId { get; set; }
+      
         public string Name { get; set; }
         public decimal Price { get; set; }
         public string Description { get; set; }
@@ -22,8 +26,7 @@ namespace CarpetProject.Products
         public DateTime ReleaseDate { get; set; } // Ürünün piyasaya çıkış tarihi
         public virtual ICollection<Category> Categories { get; set; }
         public virtual ICollection<ProductImage> ProductImages { get; set; }
-        public virtual ICollection<Tag> Tags { get; set; } // Ürüne ait etiketler
-     
+        public virtual ICollection<certificate>? Certificates { get; set; }
 
 
 
@@ -31,8 +34,8 @@ namespace CarpetProject.Products
         {
             Categories = new HashSet<Category>();
             ProductImages = new HashSet<ProductImage>();
-            Tags = new HashSet<Tag>();
-        
+            Certificates = new HashSet<certificate>();
+           
 
         }
     }
