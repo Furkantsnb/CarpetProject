@@ -1,6 +1,6 @@
 ﻿using CarpetProject.Entities.Categories;
 using CarpetProject.EntityDto.ProductImages;
-using CarpetProject.EntityDtos.Tags;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +24,6 @@ namespace CarpetProject.Entities.Products
 
         public List<CategoryDto> Categories { get; set; }
         public List<ProductImageDto> ProductImages { get; set; }
-        public List<CertificateDto> Tags { get; set; }
+
     }
 }

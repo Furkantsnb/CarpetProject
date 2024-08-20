@@ -38,15 +38,11 @@ namespace CarpetProject.FluentValidations.Products
                 .NotNull().WithMessage("Onay durumu gereklidir.")
                 .Must(val => val == true || val == false).WithMessage("Onay durumu true ya da false olmalıdır.");
 
-            RuleFor(x => x.Tags)
-                .NotEmpty().WithMessage("En az bir etiket gereklidir.");
 
             RuleFor(x => x.CategoryIds)
                 .NotEmpty().WithMessage("En az bir kategori atanmalıdır.")
                 .Must(cIds => cIds.Count > 0).WithMessage("En az bir kategori atanmalıdır.");
 
-            RuleFor(x => x.Tags)
-                .Must(tags => tags.All(tag => !string.IsNullOrEmpty(tag.Name))).WithMessage("Tüm etiketlerin bir adı olmalıdır.");
         }
 
         // Geçerli bir URL olup olmadığını kontrol eden yardımcı metot

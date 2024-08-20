@@ -62,7 +62,7 @@ public class CarpetProjectDbContext :
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<ProductImage> ProductImages { get; set; }
-    public DbSet<certificate> Certificates { get; set; }
+
 
     #endregion
 

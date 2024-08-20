@@ -14,7 +14,6 @@ namespace CarpetProject.Categories
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public string Image { get; set; }
         public int? ParentCategoryId { get; set; }
         public bool IsApproved { get; set; }//Aktif mi değilmi Kontrolü
         public string ColorCode { get; set; } // Renk kodu
@@ -22,6 +21,8 @@ namespace CarpetProject.Categories
         public virtual Category ParentCategory { get; set; }//üst kategory
         public virtual ICollection<Category> SubCategories { get; set; }//alt kategoriy
         public virtual ICollection<Product> Products { get; set; }//kategorideki ürünler
+        public virtual ProductImage ProductImage { get; set; } // Kategoriye ait resim (Birebir ilişki)
+
 
         public Category()
         {

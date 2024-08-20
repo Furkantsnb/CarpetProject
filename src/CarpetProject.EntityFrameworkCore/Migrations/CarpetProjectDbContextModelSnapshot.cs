@@ -56,10 +56,6 @@ namespace CarpetProject.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("Image")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<bool>("IsApproved")
                         .HasColumnType("boolean");
 
@@ -102,6 +98,9 @@ namespace CarpetProject.Migrations
                     b.Property<string>("AdditionalInfo")
                         .HasColumnType("text");
 
+                    b.Property<bool>("Certification")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("timestamp without time zone")
                         .HasColumnName("CreationTime");
@@ -121,6 +120,9 @@ namespace CarpetProject.Migrations
                     b.Property<string>("Description")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("HasDiscount")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Ingredients")
                         .HasColumnType("text");
@@ -146,11 +148,11 @@ namespace CarpetProject.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal?>("OldPrice")
                         .HasColumnType("numeric");
 
-                    b.Property<DateTime>("ReleaseDate")
-                        .HasColumnType("timestamp without time zone");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("numeric");
 
                     b.Property<string>("Usage")
                         .HasColumnType("text");
@@ -167,6 +169,9 @@ namespace CarpetProject.Migrations
                         .HasColumnType("integer");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("CategoryId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("CreationTime")
                         .HasColumnType("timestamp without time zone")
@@ -202,61 +207,21 @@ namespace CarpetProject.Migrations
                         .HasColumnType("uuid")
                         .HasColumnName("LastModifierId");
 
-                    b.Property<int>("ProductId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProductId");
-
-                    b.ToTable("ProductImages");
-                });
-
-            modelBuilder.Entity("CarpetProject.Products.certificate", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreationTime")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("CreationTime");
-
-                    b.Property<Guid?>("CreatorId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("CreatorId");
-
-                    b.Property<Guid?>("DeleterId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("DeleterId");
-
-                    b.Property<DateTime?>("DeletionTime")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("DeletionTime");
-
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(false)
-                        .HasColumnName("IsDeleted");
-
-                    b.Property<DateTime?>("LastModificationTime")
-                        .HasColumnType("timestamp without time zone")
-                        .HasColumnName("LastModificationTime");
-
-                    b.Property<Guid?>("LastModifierId")
-                        .HasColumnType("uuid")
-                        .HasColumnName("LastModifierId");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("ProductId")
+                        .HasColumnType("integer");
+
                     b.HasKey("Id");
 
-                    b.ToTable("Certificates");
+                    b.HasIndex("CategoryId")
+                        .IsUnique();
+
+                    b.HasIndex("ProductId");
+
+                    b.ToTable("ProductImages");
                 });
 
             modelBuilder.Entity("CategoryProduct", b =>
@@ -272,21 +237,6 @@ namespace CarpetProject.Migrations
                     b.HasIndex("ProductsId");
 
                     b.ToTable("ProductCategories", (string)null);
-                });
-
-            modelBuilder.Entity("Productcertificate", b =>
-                {
-                    b.Property<int>("CertificatesId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ProductsId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("CertificatesId", "ProductsId");
-
-                    b.HasIndex("ProductsId");
-
-                    b.ToTable("Productcertificate");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>
@@ -2914,11 +2864,16 @@ namespace CarpetProject.Migrations
 
             modelBuilder.Entity("CarpetProject.Products.ProductImage", b =>
                 {
+                    b.HasOne("CarpetProject.Categories.Category", "Category")
+                        .WithOne("ProductImage")
+                        .HasForeignKey("CarpetProject.Products.ProductImage", "CategoryId");
+
                     b.HasOne("CarpetProject.Products.Product", "Product")
                         .WithMany("ProductImages")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.Navigation("Category");
 
                     b.Navigation("Product");
                 });
@@ -2928,21 +2883,6 @@ namespace CarpetProject.Migrations
                     b.HasOne("CarpetProject.Categories.Category", null)
                         .WithMany()
                         .HasForeignKey("CategoriesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("CarpetProject.Products.Product", null)
-                        .WithMany()
-                        .HasForeignKey("ProductsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Productcertificate", b =>
-                {
-                    b.HasOne("CarpetProject.Products.certificate", null)
-                        .WithMany()
-                        .HasForeignKey("CertificatesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -3108,6 +3048,9 @@ namespace CarpetProject.Migrations
 
             modelBuilder.Entity("CarpetProject.Categories.Category", b =>
                 {
+                    b.Navigation("ProductImage")
+                        .IsRequired();
+
                     b.Navigation("SubCategories");
                 });
 

@@ -420,7 +420,6 @@ namespace CarpetProject.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
-                    Image = table.Column<string>(type: "text", nullable: false),
                     ParentCategoryId = table.Column<int>(type: "integer", nullable: true),
                     IsApproved = table.Column<bool>(type: "boolean", nullable: false),
                     ColorCode = table.Column<string>(type: "text", nullable: false),
@@ -440,26 +439,6 @@ namespace CarpetProject.Migrations
                         column: x => x.ParentCategoryId,
                         principalTable: "Categories",
                         principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Certificates",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
-                    CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
-                    LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
-                    LastModifierId = table.Column<Guid>(type: "uuid", nullable: true),
-                    IsDeleted = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
-                    DeleterId = table.Column<Guid>(type: "uuid", nullable: true),
-                    DeletionTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Certificates", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -794,12 +773,14 @@ namespace CarpetProject.Migrations
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Price = table.Column<decimal>(type: "numeric", nullable: false),
+                    HasDiscount = table.Column<bool>(type: "boolean", nullable: false),
+                    OldPrice = table.Column<decimal>(type: "numeric", nullable: true),
+                    Certification = table.Column<bool>(type: "boolean", nullable: false),
                     Description = table.Column<string>(type: "text", nullable: false),
                     Ingredients = table.Column<string>(type: "text", nullable: true),
                     Usage = table.Column<string>(type: "text", nullable: true),
                     AdditionalInfo = table.Column<string>(type: "text", nullable: true),
                     IsApproved = table.Column<bool>(type: "boolean", nullable: false),
-                    ReleaseDate = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
@@ -1138,37 +1119,15 @@ namespace CarpetProject.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Productcertificate",
-                columns: table => new
-                {
-                    CertificatesId = table.Column<int>(type: "integer", nullable: false),
-                    ProductsId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Productcertificate", x => new { x.CertificatesId, x.ProductsId });
-                    table.ForeignKey(
-                        name: "FK_Productcertificate_Certificates_CertificatesId",
-                        column: x => x.CertificatesId,
-                        principalTable: "Certificates",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Productcertificate_Products_ProductsId",
-                        column: x => x.ProductsId,
-                        principalTable: "Products",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "ProductImages",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    ProductId = table.Column<int>(type: "integer", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
                     ImageUrl = table.Column<string>(type: "text", nullable: false),
+                    CategoryId = table.Column<int>(type: "integer", nullable: true),
+                    ProductId = table.Column<int>(type: "integer", nullable: true),
                     CreationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: false),
                     CreatorId = table.Column<Guid>(type: "uuid", nullable: true),
                     LastModificationTime = table.Column<DateTime>(type: "timestamp without time zone", nullable: true),
@@ -1180,6 +1139,11 @@ namespace CarpetProject.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ProductImages", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ProductImages_Categories_CategoryId",
+                        column: x => x.CategoryId,
+                        principalTable: "Categories",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_ProductImages_Products_ProductId",
                         column: x => x.ProductId,
@@ -1567,9 +1531,10 @@ namespace CarpetProject.Migrations
                 column: "ProductsId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Productcertificate_ProductsId",
-                table: "Productcertificate",
-                column: "ProductsId");
+                name: "IX_ProductImages_CategoryId",
+                table: "ProductImages",
+                column: "CategoryId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_ProductImages_ProductId",
@@ -1698,9 +1663,6 @@ namespace CarpetProject.Migrations
                 name: "ProductCategories");
 
             migrationBuilder.DropTable(
-                name: "Productcertificate");
-
-            migrationBuilder.DropTable(
                 name: "ProductImages");
 
             migrationBuilder.DropTable(
@@ -1726,9 +1688,6 @@ namespace CarpetProject.Migrations
 
             migrationBuilder.DropTable(
                 name: "Categories");
-
-            migrationBuilder.DropTable(
-                name: "Certificates");
 
             migrationBuilder.DropTable(
                 name: "Products");

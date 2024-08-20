@@ -1,6 +1,6 @@
 ﻿using CarpetProject.Entities.Categories;
 using CarpetProject.EntityDto.ProductImages;
-using CarpetProject.EntityDtos.Tags;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,6 +24,6 @@ namespace CarpetProject.Entities.Products
 
         public List<UpdateCategoryDto> Categories { get; set; } // Kategoriler listesi
         public List<UpdateProductImageDto> ProductImages { get; set; }
-        public List<UpdateCertificateDto> Tags { get; set; } // Etiketler listesi
+      
     }
 }
