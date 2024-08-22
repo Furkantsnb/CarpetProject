@@ -11,16 +11,15 @@ namespace CarpetProject.Entities.Categories
 {
     public class CategoryDto: FullAuditedEntityDto<int>
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public int? ParentCategoryId { get; set; }
-        public string ParentCategoryName { get; set; } // To display the name of the parent category
-        public bool IsApproved { get; set; }
-        public string ColorCode { get; set; }
+        public string Name { get; set; } // Kategori adı
+        public string Description { get; set; } // Kategori açıklaması
+        public int? ParentCategoryId { get; set; } // Üst kategori ID'si
+        public bool IsApproved { get; set; } // Kategori onay durumu
+        public string ColorCode { get; set; } // Renk kodu
 
-        public ICollection<CategoryDto> SubCategories { get; set; } // For nested categories
-        public ICollection<ProductDto> Products { get; set; } // Products associated with this category
-        public ProductImageDto ProductImage { get; set; } // Image associated with the category
+        public List<CategoryDto> SubCategories { get; set; } // Alt kategoriler
+        public List<ProductDto> Products { get; set; } // Bu kategoriye ait ürünler
+        public ProductImageDto ProductImage { get; set; } // Kategoriye ait resim
 
         public CategoryDto()
         {

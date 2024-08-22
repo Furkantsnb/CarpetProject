@@ -29,5 +29,11 @@ namespace CarpetProject.Entities.Products
         // Ürün için yüklenen görsellerin ID'lerini tutan liste
         public List<int> ImageIds { get; set; }
 
+        public ProductDto() 
+        { 
+          CategoryIds = new List<int>();
+            ImageIds = new List<int>();
+        }
+
     }
 }

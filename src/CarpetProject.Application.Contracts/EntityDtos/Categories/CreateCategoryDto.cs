@@ -10,12 +10,21 @@ namespace CarpetProject.Entities.Categories
 {
     public class CreateCategoryDto
     {
-        public string Name { get; set; }
-        public string Description { get; set; }
-        public int? ParentCategoryId { get; set; } // Optional for creating a subcategory
-        public bool IsApproved { get; set; } = true; // Default to approved
+        public string Name { get; set; } // Kategori adı
+        public string Description { get; set; } // Kategori açıklaması
+        public int? ParentCategoryId { get; set; } // Üst kategori ID'si
+        public bool IsApproved { get; set; } // Kategori onay durumu
         public string ColorCode { get; set; } // Renk kodu
 
-     
+        public List<CategoryDto> SubCategories { get; set; } // Alt kategoriler
+
+
+        public CreateCategoryDto()
+        {
+            SubCategories = new List<CategoryDto>();
+
+        }
+
+
     }
 }

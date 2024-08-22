@@ -23,11 +23,18 @@ namespace CarpetProject.Entities.Products
         public string? AdditionalInfo { get; set; }//ek bilgi     
         public bool IsApproved { get; set; }//Aktif mi değilmi Kontrolü
 
+
         // Bir ürünün atanacağı kategori ID'lerini tutan liste
-        public List<int>? CategoryIds { get; set; }
+        public List<int> CategoryIds { get; set; }
 
         // Ürün için yüklenen görsellerin ID'lerini tutan liste
-        public List<int>? ImageIds { get; set; }
+        public List<int> ImageIds { get; set; }
+
+        public CreateProductDto()
+        {
+            CategoryIds = new List<int>();
+            ImageIds = new List<int>();
+        }
 
 
     }
