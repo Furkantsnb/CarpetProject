@@ -58,13 +58,13 @@ namespace CarpetProject.FluentValidations.Products
                 .When(x => x.HasDiscount) // Eski fiyatı sadece indirim uygulandığında kontrol et
                 .WithMessage("Eski fiyat 0.01'den büyük olmalıdır.");
 
-            // Ürünün en az bir kategoriye atanmış olduğunu kontrol eden kural
-            RuleFor(x => x.CategoryIds)
-                .NotEmpty().WithMessage("Ürün en az bir kategoriye atanmalıdır.");
+            //// Ürünün en az bir kategoriye atanmış olduğunu kontrol eden kural
+            //RuleFor(x => x.CategoryIds)
+            //    .NotEmpty().WithMessage("Ürün en az bir kategoriye atanmalıdır.");
 
-            // Ürünün en az bir görsele sahip olduğunu kontrol eden kural
-            RuleFor(x => x.ImageIds)
-                .NotEmpty().WithMessage("Ürün için en az bir görsel yüklenmelidir.");
+            //// Ürünün en az bir görsele sahip olduğunu kontrol eden kural
+            //RuleFor(x => x.ImageIds)
+            //    .NotEmpty().WithMessage("Ürün için en az bir görsel yüklenmelidir.");
         }
     }
 }

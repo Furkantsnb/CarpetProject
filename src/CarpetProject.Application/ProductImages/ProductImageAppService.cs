@@ -41,9 +41,9 @@ namespace CarpetProject.ProductImages
             return await _productImageManager.GetAsync(id);
         }
 
-        public override Task<PagedResultDto<ProductImageDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        public override async Task<PagedResultDto<ProductImageDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
-            return base.GetListAsync(input);
+            return await _productImageManager.GetListAsync(input);
         }
 
         public async Task HartDeleteAsync(int id)

@@ -8,9 +8,8 @@ using System.Threading.Tasks;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
-using CarpetProject.Products;
 using CarpetProject.Entities.Products;
-using CarpetProject.Entities.Categories;
+
 using Volo.Abp;
 
 namespace CarpetProject.Products
@@ -19,14 +18,17 @@ namespace CarpetProject.Products
     {
         private readonly IRepository<Product, int> _productRepository;
         private readonly IRepository<Category, int> _categoryRepository;
+        private readonly IRepository<ProductImage, int> _productImageRepository;
         private readonly IMapper _mapper;
 
-        public ProductManager(IRepository<Product, int> productRepository, IRepository<Category, int> categoryRepository, IMapper mapper)
+        public ProductManager(IRepository<Product, int> productRepository, IRepository<Category, int> categoryRepository, IRepository<ProductImage, int> productImage, IMapper mapper)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
+            _productImageRepository = productImage;
             _mapper = mapper;
         }
+
 
         public async Task<ProductDto> CreateAsync(CreateProductDto input)
         {
@@ -35,6 +37,30 @@ namespace CarpetProject.Products
             if (isProductNameExists)
             {
                 throw new UserFriendlyException($"Bu ürün ismi ({input.Name}) zaten başka bir ürün tarafından kullanılmıştır.");
+            }
+            // Kategori ID'lerinin geçerliliğini kontrol et
+            if (input.CategoryIds != null)
+            {
+                foreach (var categoryId in input.CategoryIds)
+                {
+                    var categoryExists = await _categoryRepository.AnyAsync(c => c.Id == categoryId);
+                    if (!categoryExists)
+                    {
+                        throw new UserFriendlyException($"Kategori ID'si ({categoryId}) geçerli değil.");
+                    }
+                }
+            }
+            // Resim ID'lerinin geçerliliğini kontrol et
+            if (input.ImageIds != null)
+            {
+                foreach (var imageId in input.ImageIds)
+                {
+                    var imageExists = await _productImageRepository.AnyAsync(i => i.Id == imageId);
+                    if (!imageExists)
+                    {
+                        throw new UserFriendlyException($"Resim ID'si ({imageId}) geçerli değil.");
+                    }
+                }
             }
 
             // DTO'yu ürün entity'sine dönüştürün
@@ -58,6 +84,30 @@ namespace CarpetProject.Products
             {
                 throw new UserFriendlyException($"Güncellenmek istenen ürün ismi ({input.Name}) adında başka bir ürün bulunmaktadır.");
             }
+            // Kategori ID'lerinin geçerliliğini kontrol et
+            if (input.CategoryIds != null)
+            {
+                foreach (var categoryId in input.CategoryIds)
+                {
+                    var categoryExists = await _categoryRepository.AnyAsync(c => c.Id == categoryId);
+                    if (!categoryExists)
+                    {
+                        throw new UserFriendlyException($"Kategori ID'si ({categoryId}) geçerli değil.");
+                    }
+                }
+            }
+            // Resim ID'lerinin geçerliliğini kontrol et
+            if (input.ImageIds != null)
+            {
+                foreach (var imageId in input.ImageIds)
+                {
+                    var imageExists = await _productImageRepository.AnyAsync(i => i.Id == imageId);
+                    if (!imageExists)
+                    {
+                        throw new UserFriendlyException($"Resim ID'si ({imageId}) geçerli değil.");
+                    }
+                }
+            }
 
             _mapper.Map(input, product);
             await _productRepository.UpdateAsync(product);
@@ -68,9 +118,6 @@ namespace CarpetProject.Products
         {
             // id sahip ürünü getirir
             var product = await _productRepository.GetAsync(id);
-
-            
-
             product.IsDeleted = true;
             await _productRepository.UpdateAsync(product); // Silme işlemi güncelleme olarak işaretlenir
         }
