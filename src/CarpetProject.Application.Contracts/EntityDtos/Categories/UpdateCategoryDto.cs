@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CarpetProject.EntityDto.ProductImages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,10 +11,10 @@ namespace CarpetProject.Entities.Categories
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public string Image { get; set; }
-        public int? ParentCategoryId { get; set; }
-        public bool IsApproved { get; set; }//Aktif mi değilmi Kontrolü
-        public string ColorCode { get; set; } // Renk kodu
-        public List<CategoryDto> SubCategories { get; set; }
+        public int? ParentCategoryId { get; set; } // Optional for changing the parent category
+        public bool IsApproved { get; set; }
+        public string ColorCode { get; set; }
+
+      
     }
 }

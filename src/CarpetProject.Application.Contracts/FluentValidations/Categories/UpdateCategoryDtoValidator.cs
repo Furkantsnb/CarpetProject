@@ -26,12 +26,6 @@ namespace CarpetProject.FluentValidations.Categories
                 .MaximumLength(500)
                 .WithMessage("Açıklama 500 karakteri aşmamalıdır.");
 
-            // Image zorunlu ve geçerli bir URL formatında olmalı
-            RuleFor(x => x.Image)
-                .NotEmpty()
-                .WithMessage("Resim URL'si boş olamaz.")
-                .Must(IsValidUrl)
-                .WithMessage("Resim URL'si geçerli bir URL olmalıdır.");
 
             // ColorCode zorunlu ve geçerli bir HEX renk kodu formatında olmalı
             RuleFor(x => x.ColorCode)
@@ -46,21 +40,6 @@ namespace CarpetProject.FluentValidations.Categories
                 .WithMessage("Onay durumu boş olamaz.")
                 .Must(x => x == true || x == false)
                 .WithMessage("Onay durumu true ya da false olmalıdır.");
-
-            // SubCategories listesi null olamaz, fakat boş olabilir
-            RuleFor(x => x.SubCategories)
-                .NotNull()
-                .WithMessage("Alt kategoriler listesi null olamaz.");
-        }
-
-        // Geçerli bir URL olup olmadığını kontrol eden yardımcı metot
-        private bool IsValidUrl(string url)
-        {
-            if (Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult))
-            {
-                return uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps;
-            }
-            return false;
         }
     }
 }

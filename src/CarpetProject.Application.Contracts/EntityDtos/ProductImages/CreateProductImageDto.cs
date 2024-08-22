@@ -8,7 +8,9 @@ namespace CarpetProject.EntityDto.ProductImages
 {
     public class CreateProductImageDto
     {
-        public int ProductId { get; set; }
+        public string Name { get; set; }
         public string ImageUrl { get; set; }
+        public int? CategoryId { get; set; }
+        public int? ProductId { get; set; }
     }
 }

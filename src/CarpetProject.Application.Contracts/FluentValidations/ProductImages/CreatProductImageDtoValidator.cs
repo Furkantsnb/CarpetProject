@@ -12,21 +12,25 @@ namespace CarpetProject.FluentValidations.ProductImages
     {
         public CreatProductImageDtoValidator()
         {
-            // ProductId'nin pozitif bir sayı olması gerektiğini belirtir
+            RuleFor(x => x.CategoryId)
+                 .NotNull().When(x => x.ProductId == null).WithMessage("Kategori ID gereklidir.")
+                 .Must((dto, categoryId) => categoryId != null || dto.ProductId != null)
+                 .WithMessage("Kategori ID veya Ürün ID'den en az biri girilmelidir.");
+
             RuleFor(x => x.ProductId)
-                .GreaterThan(0)
-                .WithMessage("ProductId 0'dan Büyük Olmalı");
+                .NotNull().When(x => x.CategoryId == null).WithMessage("Ürün ID gereklidir.")
+                .Must((dto, productId) => productId != null || dto.CategoryId != null)
+                .WithMessage("Kategori ID veya Ürün ID'den en az biri girilmelidir.");
 
             // ImageUrl'in boş olmaması gerektiğini belirtir
             RuleFor(x => x.ImageUrl)
                 .NotEmpty()
-                .WithMessage("Resim Boş Olamaz");
-
-            // ImageUrl'in geçerli bir URL formatında olup olmadığını kontrol eder
-            RuleFor(x => x.ImageUrl)
-                .Must(IsValidUrl)
+                .WithMessage("Resim Boş Olamaz")
+                 .Must(IsValidUrl)
                 .WithMessage("Geçerli bir URL Gİriniz.")
                 .When(x => !string.IsNullOrEmpty(x.ImageUrl));
+
+        
         }
 
         // Geçerli bir URL olup olmadığını kontrol eden bir yardımcı metot

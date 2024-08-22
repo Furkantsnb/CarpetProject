@@ -21,38 +21,50 @@ namespace CarpetProject.FluentValidations.Products
             RuleFor(x => x.Price)
                 .GreaterThan(0.01m).WithMessage("Ürün fiyatı 0.01'den büyük olmalıdır.");
 
+            // Description zorunlu ve en fazla 500 karakter olmalı
             RuleFor(x => x.Description)
-                .NotEmpty().WithMessage("Açıklama gereklidir.");
+                .NotEmpty()
+                .WithMessage("Açıklama boş olamaz.")
+                .MaximumLength(500)
+                .WithMessage("Açıklama 500 karakteri aşmamalıdır.");
 
-            RuleFor(x => x.ReleaseDate)
-                .NotEmpty().WithMessage("Piyasaya çıkış tarihi gereklidir.")
-                .LessThanOrEqualTo(DateTime.UtcNow).WithMessage("Piyasaya çıkış tarihi gelecekte olamaz.");
-
-            RuleFor(x => x.ProductImages)
-                .NotEmpty().WithMessage("En az bir ürün görseli gereklidir.")
-                .ForEach(image => image
-                    .Must(img => IsValidUrl(img.ImageUrl)).WithMessage("Her ürün görseli geçerli bir URL formatında olmalıdır."));
-                    
 
             RuleFor(x => x.IsApproved)
                 .NotNull().WithMessage("Onay durumu gereklidir.")
                 .Must(val => val == true || val == false).WithMessage("Onay durumu true ya da false olmalıdır.");
 
+            RuleFor(x => x.Certification)
+                    .NotNull().WithMessage("Serfika durumu gereklidir.")
+                    .Must(val => val == true || val == false).WithMessage("Serfika durumu true ya da false olmalıdır.");
 
+            RuleFor(x => x.HasDiscount)
+                   .NotNull().WithMessage("İndirim durumu gereklidir.")
+                   .Must(val => val == true || val == false).WithMessage("indirim durumu true ya da false olmalıdır.");
+
+            RuleFor(x => x.HasDiscount)
+                   .Must((dto, hasDiscount) =>
+                   {
+                       if (hasDiscount && dto.OldPrice == null)
+                       {
+                           return false;
+                       }
+                       return true;
+                   })
+                     .WithMessage("İndirim uygulanmışsa eski fiyat belirtilmelidir.")
+                  .When(x => x.HasDiscount); // Eski fiyatı sadece indirim uygulandığında kontrol et
+
+            RuleFor(x => x.OldPrice)
+                .GreaterThan(0.01m)
+                .When(x => x.HasDiscount) // Eski fiyatı sadece indirim uygulandığında kontrol et
+                .WithMessage("Eski fiyat 0.01'den büyük olmalıdır.");
+
+            // Ürünün en az bir kategoriye atanmış olduğunu kontrol eden kural
             RuleFor(x => x.CategoryIds)
-                .NotEmpty().WithMessage("En az bir kategori atanmalıdır.")
-                .Must(cIds => cIds.Count > 0).WithMessage("En az bir kategori atanmalıdır.");
+                .NotEmpty().WithMessage("Ürün en az bir kategoriye atanmalıdır.");
 
-        }
-
-        // Geçerli bir URL olup olmadığını kontrol eden yardımcı metot
-        private bool IsValidUrl(string url)
-        {
-            if (Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult))
-            {
-                return uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps;
-            }
-            return false;
+            // Ürünün en az bir görsele sahip olduğunu kontrol eden kural
+            RuleFor(x => x.ImageIds)
+                .NotEmpty().WithMessage("Ürün için en az bir görsel yüklenmelidir.");
         }
     }
 }

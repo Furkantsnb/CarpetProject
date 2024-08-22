@@ -7,9 +7,11 @@ using Volo.Abp.Application.Dtos;
 
 namespace CarpetProject.EntityDto.ProductImages
 {
-    public class ProductImageDto : EntityDto<int>
+    public class ProductImageDto : FullAuditedEntityDto<int>
     {
-        public int ProductId { get; set; }
+        public string Name { get; set; }
         public string ImageUrl { get; set; }
+        public int? CategoryId { get; set; }
+        public int? ProductId { get; set; }
     }
 }

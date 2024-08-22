@@ -12,18 +12,22 @@ namespace CarpetProject.Entities.Products
 {
     public class UpdateProductDto 
     {
-
         public string Name { get; set; }
-        public decimal Price { get; set; }
-        public string Description { get; set; }
+        public decimal Price { get; set; } // Yeni fiyat 
+        public bool HasDiscount { get; set; }//indirim var mı
+        public decimal? OldPrice { get; set; } // Eski fiyat (indirim uygulanmışsa)
+        public bool Certification { get; set; }//serfikası var mı?
+        public string Description { get; set; }//açıklama
         public string? Ingredients { get; set; }//ürün içeriği
         public string? Usage { get; set; }//ürün nasıl kullanılmalı
-        public string? AdditionalInfo { get; set; }//ek bilgi
+        public string? AdditionalInfo { get; set; }//ek bilgi     
         public bool IsApproved { get; set; }//Aktif mi değilmi Kontrolü
-        public DateTime ReleaseDate { get; set; } // Ürünün piyasaya çıkış tarihi
 
-        public List<UpdateCategoryDto> Categories { get; set; } // Kategoriler listesi
-        public List<UpdateProductImageDto> ProductImages { get; set; }
-      
+        // Bir ürünün atanacağı kategori ID'lerini tutan liste
+        public List<int> CategoryIds { get; set; }
+
+        // Ürün için yüklenen görsellerin ID'lerini tutan liste
+        public List<int> ImageIds { get; set; }
+
     }
 }
