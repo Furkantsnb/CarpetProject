@@ -129,7 +129,7 @@ namespace CarpetProject.Products
             //Ürünün mevcut olup olmadığını ve geçerli olup olmadığını kontrol et
             var products = await _productRepository.FirstOrDefaultAsync(p => !p.IsDeleted && p.IsApproved);
 
-            if (product == null)
+            if (products == null)
             {
                 throw new UserFriendlyException($"ID = {id} olan ürün silinmiş/onaylanmamış.");
             }
