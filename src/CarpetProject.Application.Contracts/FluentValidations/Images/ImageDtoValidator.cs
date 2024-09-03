@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 
 namespace CarpetProject.FluentValidations.ProductImages
 {
-    public class ProductImageDtoValidator :AbstractValidator<ProductImageDto>
+    public class ImageDtoValidator :AbstractValidator<ImageDto>
     {
-        public ProductImageDtoValidator() 
+        public ImageDtoValidator() 
         {
 
             RuleFor(x => x.CategoryId)
@@ -23,26 +23,12 @@ namespace CarpetProject.FluentValidations.ProductImages
                 .Must((dto, productId) => productId != null || dto.CategoryId != null)
                 .WithMessage("Kategori ID veya Ürün ID'den en az biri girilmelidir.");
 
-            // ImageUrl'in boş olmaması gerektiğini belirtir
-            RuleFor(x => x.ImageUrl)
-                .NotEmpty()
-                .WithMessage("Resim Boş Olamaz")
-                .Must(IsValidUrl)
-                .WithMessage("Geçerli bir URL Gİriniz.")
-                .When(x => !string.IsNullOrEmpty(x.ImageUrl));
+        
 
 
 
         }
 
-        // Geçerli bir URL olup olmadığını kontrol eden bir yardımcı metot
-        private bool IsValidUrl(string url)
-        {
-            if (Uri.TryCreate(url, UriKind.Absolute, out Uri uriResult))
-            {
-                return uriResult.Scheme == Uri.UriSchemeHttp || uriResult.Scheme == Uri.UriSchemeHttps;
-            }
-            return false;
-        }
+    
     }
 }

@@ -2,6 +2,7 @@
 using CarpetProject.Categories;
 using CarpetProject.Entities.Products;
 using CarpetProject.EntityDto.ProductImages;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,18 +17,18 @@ using Volo.Abp.Domain.Services;
 
 namespace CarpetProject.Products
 {
-    public class ProductImageManager : DomainService
+    public class ImageManager : DomainService
     {
         private readonly IRepository<Product, int> _productRepository;
         private readonly IRepository<Category, int> _categoryRepository;
-        private readonly IRepository<ProductImage, int> _productImage;
+        private readonly IRepository<Image, int> _productImage;
         private readonly IMapper _mapper;
 
         private readonly IBlobContainer _blobContainer;
 
       
         
-        public ProductImageManager(IRepository<Product, int> productRepository, IRepository<Category, int> categoryRepository, IRepository<ProductImage, int> productImage, IMapper mapper, IBlobContainerFactory blobContainerFactory)
+        public ImageManager(IRepository<Product, int> productRepository, IRepository<Category, int> categoryRepository, IRepository<Image, int> productImage, IMapper mapper, IBlobContainerFactory blobContainerFactory)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
@@ -36,10 +37,10 @@ namespace CarpetProject.Products
             _blobContainer = blobContainerFactory.Create("furkan");
         }
 
-        public async Task<ProductImageDto> CreateAsync(CreateProductImageDto input)
+        public async Task<ImageDto> CreateAsync(CreateImageDto input)
         {
             // Kategori ID veya Ürün ID'nin geçerliliğini kontrol et
-            if (input.CategoryId.HasValue)
+             if (input.CategoryId.HasValue)
             {
                 var categoryExists = await _categoryRepository.AnyAsync(c => c.Id == input.CategoryId.Value);
                 if (!categoryExists)
@@ -66,13 +67,17 @@ namespace CarpetProject.Products
             }
 
             // Resmi MinIO'ya yükleyin
-            var blobName = Guid.NewGuid().ToString("N") + Path.GetExtension(input.ImageUrl);
+            var blobName = Guid.NewGuid().ToString("N") + Path.GetExtension(input.ImageFile.FileName);
 
             // Resim dosyasını okuyup byte array'e çevirin
             byte[] imageBytes;
             try
             {
-                imageBytes = await File.ReadAllBytesAsync(input.ImageUrl); // input.ImageUrl burada bir dosya yolu olmalı
+                using (var memoryStream = new MemoryStream())
+                {
+                    await input.ImageFile.CopyToAsync(memoryStream);
+                    imageBytes = memoryStream.ToArray();
+                }
             }
             catch (Exception ex)
             {
@@ -82,20 +87,24 @@ namespace CarpetProject.Products
             await _blobContainer.SaveAsync(blobName, imageBytes);
 
             // DTO'yu ürün resim entity'sine dönüştürün ve MinIO URL'ini ayarlayın
-            var productImage = _mapper.Map<CreateProductImageDto, ProductImage>(input);
+            var productImage = _mapper.Map<CreateImageDto, Image>(input);
             productImage.ImageUrl = blobName; // MinIO'daki resim URL'sini ayarlayın
 
             // Resmi veritabanına ekleyin
             await _productImage.InsertAsync(productImage);
 
             // Eklenen resmi DTO olarak geri döndürün
-            return _mapper.Map<ProductImage, ProductImageDto>(productImage);
+            return _mapper.Map<Image, ImageDto>(productImage);
         }
 
-        public async Task<ProductImageDto> UpdateAsync(int id, UpdateProductImageDto input)
+        public async Task<ImageDto> UpdateAsync(int id, UpdateImageDto input)
         {
             // Güncellenmekte olan resim kaydını al
             var productImage = await _productImage.GetAsync(id);
+            if (productImage == null)
+            {
+                throw new UserFriendlyException($"Resim ID'si ({id}) geçerli değil.");
+            }
 
             // Kategori ID veya Ürün ID'nin geçerliliğini kontrol et
             if (input.CategoryId.HasValue)
@@ -125,24 +134,33 @@ namespace CarpetProject.Products
                 throw new UserFriendlyException($"Bu isim ({input.Name}) zaten başka bir resim tarafından kullanılmıştır.");
             }
 
-            // Eğer yeni bir resim URL'i verilmişse, MinIO'ya yükle
-            if (!string.IsNullOrEmpty(input.ImageUrl))
+            // Eğer yeni bir resim dosyası sağlanmışsa, resmi MinIO'ya yükleyin
+            if (input.ImageFile != null && input.ImageFile.Length > 0)
             {
-                var blobName = Guid.NewGuid().ToString("N") + Path.GetExtension(input.ImageUrl);
+                var blobName = Guid.NewGuid().ToString("N") + Path.GetExtension(input.ImageFile.FileName);
 
                 // Resim dosyasını okuyup byte array'e çevirin
                 byte[] imageBytes;
                 try
                 {
-                    imageBytes = await File.ReadAllBytesAsync(input.ImageUrl); // input.ImageUrl burada bir dosya yolu olmalı
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await input.ImageFile.CopyToAsync(memoryStream);
+                        imageBytes = memoryStream.ToArray();
+                    }
                 }
                 catch (Exception ex)
                 {
                     throw new UserFriendlyException("Resim dosyasını okurken bir hata oluştu.", ex.Message);
                 }
 
+                // Eski resmi silmek isteyebilirsiniz, ancak bu isteğe bağlıdır
+                // await _blobContainer.DeleteAsync(productImage.ImageUrl);
+
                 await _blobContainer.SaveAsync(blobName, imageBytes);
-                productImage.ImageUrl = blobName; // MinIO'daki yeni resim URL'sini ayarlayın
+
+                // MinIO URL'ini güncelle
+                productImage.ImageUrl = blobName;
             }
 
             // Diğer alanları güncelle
@@ -152,7 +170,7 @@ namespace CarpetProject.Products
             await _productImage.UpdateAsync(productImage);
 
             // Güncellenen resmi DTO olarak geri döndür
-            return _mapper.Map<ProductImage, ProductImageDto>(productImage);
+            return _mapper.Map<Image, ImageDto>(productImage);
         }
 
         public async Task DeleteAsync(int id)
@@ -168,7 +186,7 @@ namespace CarpetProject.Products
             await _productImage.UpdateAsync(productImage);
         }
 
-        public async Task<ProductImageDto> GetAsync(int id)
+        public async Task<ImageDto> GetAsync(int id)
         {
             // İlgili resim kaydını al
             var productImage = await _productImage.FirstOrDefaultAsync(img => img.Id == id && !img.IsDeleted);
@@ -177,12 +195,15 @@ namespace CarpetProject.Products
             {
                 throw new UserFriendlyException("Resim bulunamadı veya silinmiş.");
             }
-            return _mapper.Map<ProductImage, ProductImageDto>(productImage);
+            return _mapper.Map<Image, ImageDto>(productImage);
         }
 
-        public async Task<PagedResultDto<ProductImageDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        public async Task<PagedResultDto<ImageDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
             var queryable = await _productImage.GetQueryableAsync();
+
+            // 2. Yumuşak silinmiş ürünleri hariç tut
+            queryable = queryable.Where(p => p.IsDeleted == false);
             var totalCount = await AsyncExecuter.CountAsync(queryable);
 
             var lines = await AsyncExecuter.ToListAsync(
@@ -191,9 +212,9 @@ namespace CarpetProject.Products
                          .Take(input.MaxResultCount)
             );
 
-            var productImageDtos = _mapper.Map<List<ProductImage>, List<ProductImageDto>>(lines);
+            var productImageDtos = _mapper.Map<List<Image>, List<ImageDto>>(lines);
 
-            return new PagedResultDto<ProductImageDto>(
+            return new PagedResultDto<ImageDto>(
                 totalCount,
                 productImageDtos
             );

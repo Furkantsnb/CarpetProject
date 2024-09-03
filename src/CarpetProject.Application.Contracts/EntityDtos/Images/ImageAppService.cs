@@ -9,7 +9,7 @@ using Volo.Abp.Application.Services;
 
 namespace CarpetProject.EntityDto.ProductImages
 {
-    public interface IProductImageAppService : ICrudAppService<ProductImageDto, int, PagedAndSortedResultRequestDto, CreateProductImageDto, UpdateProductImageDto>
+    public interface ImageAppService : ICrudAppService<ImageDto, int, PagedAndSortedResultRequestDto, CreateImageDto, UpdateImageDto>
     {
         Task HartDeleteAsync(int id);
     }

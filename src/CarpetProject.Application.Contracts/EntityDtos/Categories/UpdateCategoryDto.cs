@@ -16,14 +16,14 @@ namespace CarpetProject.Entities.Categories
         public bool IsApproved { get; set; } // Kategori onay durumu
         public string ColorCode { get; set; } // Renk kodu
 
-        public List<CategoryDto> SubCategories { get; set; } // Alt kategoriler
-        public List<ProductDto> Products { get; set; } // Bu kategoriye ait ürünler
-        public ProductImageDto ProductImage { get; set; } // Kategoriye ait resim
+        public List<int> SubCategories { get; set; } // Alt kategoriler
+        public List<int> Products { get; set; } // Bu kategoriye ait ürünler
+        public int ProductImage { get; set; } // Kategoriye ait resim
 
         public UpdateCategoryDto()
         {
-            SubCategories = new List<CategoryDto>();
-            Products = new List<ProductDto>();
+            SubCategories = new List<int>();
+            Products = new List<int>();
         }
 
 

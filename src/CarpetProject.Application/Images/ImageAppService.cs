@@ -1,6 +1,7 @@
 ﻿using CarpetProject.Entities.Products;
 using CarpetProject.EntityDto.ProductImages;
 using CarpetProject.Products;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,21 +13,22 @@ using Volo.Abp.Domain.Repositories;
 
 namespace CarpetProject.ProductImages
 {
-    public class ProductImageAppService : CrudAppService<ProductImage, ProductImageDto, int, PagedAndSortedResultRequestDto, CreateProductImageDto, UpdateProductImageDto>, IProductImageAppService
+    public class ImageAppService : CrudAppService<Image, ImageDto, int, PagedAndSortedResultRequestDto, CreateImageDto, UpdateImageDto>, EntityDto.ProductImages.ImageAppService
     {
-        private readonly ProductImageManager _productImageManager;
+        private readonly ImageManager _productImageManager;
 
-        public ProductImageAppService(IRepository<ProductImage, int> repository, ProductImageManager productImageManager) : base(repository)
+        public ImageAppService(IRepository<Image, int> repository, ImageManager productImageManager) : base(repository)
         {
             _productImageManager = productImageManager;
         }
 
-        public override async Task<ProductImageDto> CreateAsync(CreateProductImageDto input)
+        [Consumes("multipart/form-data")]
+        public override async Task<ImageDto> CreateAsync([FromForm] CreateImageDto input)
         {
             return await _productImageManager.CreateAsync(input);
         }
-
-        public override async Task<ProductImageDto> UpdateAsync(int id, UpdateProductImageDto input)
+        [Consumes("multipart/form-data")]
+        public override async Task<ImageDto> UpdateAsync(int id, [FromForm] UpdateImageDto input)
         {
             return await _productImageManager.UpdateAsync(id, input);
         }
@@ -36,12 +38,12 @@ namespace CarpetProject.ProductImages
             await _productImageManager.DeleteAsync(id);
         }
 
-        public override async Task<ProductImageDto> GetAsync(int id)
+        public override async Task<ImageDto> GetAsync(int id)
         {
             return await _productImageManager.GetAsync(id);
         }
 
-        public override async Task<PagedResultDto<ProductImageDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        public override async Task<PagedResultDto<ImageDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
             return await _productImageManager.GetListAsync(input);
         }

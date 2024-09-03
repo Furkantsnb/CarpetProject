@@ -17,9 +17,9 @@ public class CarpetProjectApplicationAutoMapperProfile : Profile
         CreateMap<Product,CreateProductDto>().ReverseMap();
         CreateMap<Product,UpdateProductDto>().ReverseMap();
 
-        CreateMap<ProductImage, ProductImageDto>().ReverseMap();
-        CreateMap<ProductImage, CreateProductImageDto>().ReverseMap();
-        CreateMap<ProductImage, UpdateProductImageDto>().ReverseMap();
+        CreateMap<Image, ImageDto>().ReverseMap();
+        CreateMap<Image, CreateImageDto>().ReverseMap();
+        CreateMap<Image, UpdateImageDto>().ReverseMap();
 
         // Category -> CategoryDto mapping
         CreateMap<Category, CategoryDto>().ReverseMap();

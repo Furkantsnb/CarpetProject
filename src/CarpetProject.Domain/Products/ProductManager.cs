@@ -18,10 +18,10 @@ namespace CarpetProject.Products
     {
         private readonly IRepository<Product, int> _productRepository;
         private readonly IRepository<Category, int> _categoryRepository;
-        private readonly IRepository<ProductImage, int> _productImageRepository;
+        private readonly IRepository<Image, int> _productImageRepository;
         private readonly IMapper _mapper;
 
-        public ProductManager(IRepository<Product, int> productRepository, IRepository<Category, int> categoryRepository, IRepository<ProductImage, int> productImage, IMapper mapper)
+        public ProductManager(IRepository<Product, int> productRepository, IRepository<Category, int> categoryRepository, IRepository<Image, int> productImage, IMapper mapper)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;

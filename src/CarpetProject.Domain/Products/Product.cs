@@ -28,7 +28,7 @@ namespace CarpetProject.Products
         public bool IsApproved { get; set; }//Aktif mi değilmi Kontrolü
       
         public virtual ICollection<Category> Categories { get; set; }
-        public virtual ICollection<ProductImage> ProductImages { get; set; }
+        public virtual ICollection<Image>? Images { get; set; }
         
 
 
@@ -36,7 +36,7 @@ namespace CarpetProject.Products
         public Product()
         {
             Categories = new HashSet<Category>();
-            ProductImages = new HashSet<ProductImage>();
+            Images = new HashSet<Image>();
             
         }
     }

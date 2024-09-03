@@ -61,7 +61,7 @@ public class CarpetProjectDbContext :
 
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
-    public DbSet<ProductImage> ProductImages { get; set; }
+    public DbSet<Image> Images { get; set; }
 
 
     #endregion
@@ -95,14 +95,27 @@ public class CarpetProjectDbContext :
             .WithMany(c => c.Products)
             .UsingEntity(j => j.ToTable("ProductCategories")); // Ara tablo ismi
 
-        // Product ve ProductImage arasýnda bire çok iliþki
+        // Product ve Image arasýnda bire çok iliþki
         builder.Entity<Product>()
-            .HasMany(p => p.ProductImages)
-            .WithOne(pi => pi.Product)
-            .HasForeignKey(pi => pi.ProductId)
-            .OnDelete(DeleteBehavior.Cascade);
+            .HasMany(p => p.Images)
+            .WithOne(i => i.Product)
+            .HasForeignKey(i => i.ProductId)
+            .OnDelete(DeleteBehavior.SetNull); // Product silindiðinde iliþkili Imagenin productý null olur
 
+        // Kategori ve Image arasýnda bire bir iliþki
+        builder.Entity<Category>()
+            .HasOne(c => c.Image) // Category'nin bir Image'ý olur
+            .WithOne(i => i.Category) // Image'nin bir Category'si olur
+            .HasForeignKey<Image>(i => i.CategoryId) // Image'da CategoryId foreign key olarak kullanýlýr
+            .OnDelete(DeleteBehavior.SetNull); // Kategori silindiðinde iliþkili Image'ýn CategoryId null olur
 
+        builder.Entity<Category>()
+    .HasOne(c => c.ParentCategory)
+    .WithMany() // ParentCategory'nin alt kategorileri bu koleksiyonla yönetilmeyecek
+    .HasForeignKey(c => c.ParentCategoryId)
+    .OnDelete(DeleteBehavior.Restrict); // Silme davranýþý 
+
+     
 
         builder.ConfigureCmsKit();
         }
