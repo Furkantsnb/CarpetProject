@@ -39,104 +39,33 @@ namespace CarpetProject.Categories
             // 2. Üst Kategori ID Geçerli Olmalıdır
             if (input.ParentCategoryId.HasValue)
             {
-                var parentCategoryExists = await _categoryRepository.AnyAsync(c => c.Id == input.ParentCategoryId.Value);
-                if (!parentCategoryExists)
+                var parentCategory = await _categoryRepository.GetAsync(input.ParentCategoryId.Value);
+                if (parentCategory == null)
                 {
                     throw new UserFriendlyException($"Üst kategori ID'si ({input.ParentCategoryId}) geçerli değil.");
                 }
-            }
 
-            // 3. Alt Kategoriler İçin Kontrol
-            if (input.SubCategories != null && input.SubCategories.Any())
-            {
-                // Alt kategorilerin döngüsel ilişkiler oluşturmadığından emin olun
-                var subCategoryIds = input.SubCategories.ToHashSet();
-                if (subCategoryIds.Count != input.SubCategories.Count)
+                // Alt kategorilerin alt kategorilere sahip olmaması gerektiğini kontrol et
+                var parentCategoryIsChild = parentCategory.ParentCategoryId.HasValue;
+                if (parentCategoryIsChild)
                 {
-                    throw new UserFriendlyException("Alt kategoriler arasında tekrar eden ID'ler var.");
-                }
-
-                // Her alt kategorinin geçerli olduğundan emin olun
-                foreach (var subCategoryId in input.SubCategories)
-                {
-                    var subCategoryExists = await _categoryRepository.AnyAsync(c => c.Id == subCategoryId);
-                    if (!subCategoryExists)
-                    {
-                        throw new UserFriendlyException($"Alt kategori ID'si ({subCategoryId}) geçerli değil.");
-                    }
-
-                    // Alt kategorilerin döngüsel ilişkiler oluşturmadığından emin olun
-                    var subCategoryHierarchy = await GetCategoryHierarchyAsync(subCategoryId);
-                    if (subCategoryHierarchy.Contains(input.ParentCategoryId.GetValueOrDefault()))
-                    {
-                        throw new UserFriendlyException($"Alt kategori ID'si ({subCategoryId}) kendi üst kategorisinin alt kategorisi olamaz.");
-                    }
+                    throw new UserFriendlyException("Bir kategori, bir alt kategorinin alt kategorisi olamaz.");
                 }
             }
 
-            //// 4. Kategorinin Kendi Alt Kategorileri İle Çakışmadığı Kontrol Edilmeli
-            //if (input.ParentCategoryId.HasValue)
-            //{
-            //    var parentCategory = await _categoryRepository.GetAsync(input.ParentCategoryId.Value);
-            //    if (parentCategory.SubCategories.Any(c => c.Id == input.ParentCategoryId))
-            //    {
-            //        throw new UserFriendlyException($"Kategori ({input.ParentCategoryId}) kendi alt kategorileriyle çakışıyor.");
-            //    }
-            //}
-
-            // 5. Yeni Kategoriyi Oluştur
+            // 3. Yeni Kategoriyi Oluştur
             var category = _mapper.Map<CreateCategoryDto, Category>(input);
             await _categoryRepository.InsertAsync(category);
 
-            // 6. Alt Kategorileri Ekle
-            if (input.SubCategories != null && input.SubCategories.Any())
-            {
-                foreach (var subCategoryId in input.SubCategories)
-                {
-                    var subCategory = await _categoryRepository.GetAsync(subCategoryId);
-                    subCategory.ParentCategoryId = category.Id;
-                    await _categoryRepository.UpdateAsync(subCategory);
-                }
-            }
-
             return _mapper.Map<Category, CategoryDto>(category);
         }
-
-        // Kategorinin tüm hiyerarşisini almak için yardımcı bir metod
-        private async Task<HashSet<int>> GetCategoryHierarchyAsync(int categoryId)
-        {
-            var result = new HashSet<int>();
-            var category = await _categoryRepository.GetAsync(categoryId);
-            if (category == null)
-            {
-                return result;
-            }
-
-            var stack = new Stack<Category>();
-            stack.Push(category);
-
-            //while (stack.Any())
-            //{
-            //    var current = stack.Pop();
-            //    result.Add(current.Id);
-
-            //    foreach (var sub in current.SubCategories)
-            //    {
-            //        stack.Push(sub);
-            //    }
-            //}
-
-            return result;
-        }
-
-
 
         public async Task<CategoryDto> UpdateAsync(int id, UpdateCategoryDto input)
         {
             // 1. Kategori Var mı Kontrolü
             var category = await _categoryRepository.GetAsync(id);
 
-            // 3. Kategori Adı Benzersiz Olmalıdır
+            // 2. Kategori Adı Benzersiz Olmalıdır
             if (category.Name != input.Name)
             {
                 var existingCategory = await _categoryRepository.FirstOrDefaultAsync(c => c.Name == input.Name);
@@ -146,50 +75,30 @@ namespace CarpetProject.Categories
                 }
             }
 
-            // 4. Üst Kategori ID Geçerli Olmalıdır
+            // 3. Üst Kategori ID Geçerli Olmalıdır
             if (input.ParentCategoryId.HasValue)
             {
-                var parentCategoryExists = await _categoryRepository.AnyAsync(c => c.Id == input.ParentCategoryId.Value);
-                if (!parentCategoryExists)
+                var parentCategory = await _categoryRepository.GetAsync(input.ParentCategoryId.Value);
+                if (parentCategory == null)
                 {
                     throw new UserFriendlyException($"Üst kategori ID'si ({input.ParentCategoryId}) geçerli değil.");
                 }
 
-                // Üst Kategori ve Alt Kategori Arasında Döngü Oluşmamalıdır
-                var parentCategoryHierarchy = await GetCategoryHierarchyAsync(input.ParentCategoryId.Value);
-                if (parentCategoryHierarchy.Contains(id))
+                // Güncellenmiş kategori, üst kategorinin alt kategorisi olmamalıdır
+                if (parentCategory.Id == id)
                 {
-                    throw new UserFriendlyException("Kategori, üst kategori olarak belirlenemez çünkü kendisinin alt kategorisi olamaz.");
+                    throw new UserFriendlyException("Kategori, kendisinin alt kategorisi olamaz.");
+                }
+
+                // Alt kategorilerin alt kategorilere sahip olmaması gerektiğini kontrol et
+                var parentCategoryIsChild = parentCategory.ParentCategoryId.HasValue;
+                if (parentCategoryIsChild)
+                {
+                    throw new UserFriendlyException("Bir kategori, bir alt kategorinin alt kategorisi olamaz.");
                 }
             }
 
-            // 5. Alt Kategoriler İçin Geçerlilik Kontrolü
-            if (input.SubCategories != null && input.SubCategories.Any())
-            {
-                var subCategoryIds = input.SubCategories.ToHashSet();
-                if (subCategoryIds.Count != input.SubCategories.Count)
-                {
-                    throw new UserFriendlyException("Alt kategoriler arasında tekrar eden ID'ler var.");
-                }
-
-                foreach (var subCategoryId in input.SubCategories)
-                {
-                    var subCategoryExists = await _categoryRepository.AnyAsync(c => c.Id == subCategoryId);
-                    if (!subCategoryExists)
-                    {
-                        throw new UserFriendlyException($"Alt kategori ID'si ({subCategoryId}) geçerli değil.");
-                    }
-
-                    // Alt Kategoriler ile Ana Kategori Arasında Döngüsel Bağlantı Oluşmamalıdır
-                    var subCategoryHierarchy = await GetCategoryHierarchyAsync(subCategoryId);
-                    if (subCategoryHierarchy.Contains(id))
-                    {
-                        throw new UserFriendlyException($"Alt kategori ID'si ({subCategoryId}) kendi üst kategorisinin alt kategorisi olamaz.");
-                    }
-                }
-            }
-
-            // DTO'yu mevcut kategoriye uygula
+            // 4. DTO'yu mevcut kategoriye uygula
             _mapper.Map(input, category);
             await _categoryRepository.UpdateAsync(category);
 

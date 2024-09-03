@@ -110,10 +110,10 @@ public class CarpetProjectDbContext :
             .OnDelete(DeleteBehavior.SetNull); // Kategori silindiðinde iliþkili Image'ýn CategoryId null olur
 
         builder.Entity<Category>()
-    .HasOne(c => c.ParentCategory)
-    .WithMany() // ParentCategory'nin alt kategorileri bu koleksiyonla yönetilmeyecek
-    .HasForeignKey(c => c.ParentCategoryId)
-    .OnDelete(DeleteBehavior.Restrict); // Silme davranýþý 
+         .HasOne(c => c.ParentCategory)
+         .WithMany() // ParentCategory'nin alt kategorileri bu koleksiyonla yönetilmeyecek
+         .HasForeignKey(c => c.ParentCategoryId)
+         .OnDelete(DeleteBehavior.Restrict); // Silme davranýþý 
 
      
 

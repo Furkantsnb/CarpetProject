@@ -38,6 +38,7 @@ namespace CarpetProject.Products
             {
                 throw new UserFriendlyException($"Bu ürün ismi ({input.Name}) zaten başka bir ürün tarafından kullanılmıştır.");
             }
+
             // Kategori ID'lerinin geçerliliğini kontrol et
             if (input.CategoryIds != null)
             {
@@ -50,40 +51,49 @@ namespace CarpetProject.Products
                     }
                 }
             }
-            // Resim ID'lerinin geçerliliğini kontrol et
-            if (input.ImageIds != null)
-            {
-                foreach (var imageId in input.ImageIds)
-                {
-                    var imageExists = await _productImageRepository.AnyAsync(i => i.Id == imageId);
-                    if (!imageExists)
-                    {
-                        throw new UserFriendlyException($"Resim ID'si ({imageId}) geçerli değil.");
-                    }
-                }
-            }
-
             // DTO'yu ürün entity'sine dönüştürün
             var product = _mapper.Map<CreateProductDto, Product>(input);
 
             // Ürünü veritabanına ekleyin
             await _productRepository.InsertAsync(product);
 
+            // Resim ID'lerinin geçerliliğini kontrol et ve ProductId güncellemesini yap
+            if (input.ImageIds != null)
+            {
+                foreach (var imageId in input.ImageIds)
+                {
+                    var image = await _productImageRepository.FirstOrDefaultAsync(i => i.Id == imageId);
+                    if (image == null)
+                    {
+                        throw new UserFriendlyException($"Resim ID'si ({imageId}) geçerli değil.");
+                    }
+
+                    if (image.ProductId.HasValue)
+                    {
+                        throw new UserFriendlyException($"Resim ID'si ({imageId}) zaten bir ürüne atanmış.");
+                    }
+
+                    // ProductId'yi güncelle
+                    image.ProductId = product.Id;
+                    await _productImageRepository.UpdateAsync(image);
+                }
+            }
             // Eklenen ürünü DTO olarak geri döndürün
             return _mapper.Map<Product, ProductDto>(product);
         }
 
         public async Task<ProductDto> UpdateAsync(int id, UpdateProductDto input)
         {
-            // id sahip ürünü getirir
+            // İlgili ID'ye sahip ürünü getir
             var product = await _productRepository.GetAsync(id);
 
-            // Güncellenmek istenen ürün adının benzersiz olduğunu kontrol et
+            // Güncellenmek istenen ürün adının benzersiz olup olmadığını kontrol et
             var isProductNameUnique = await _productRepository.AnyAsync(p => p.Name == input.Name && p.Id != id);
             if (isProductNameUnique)
             {
                 throw new UserFriendlyException($"Güncellenmek istenen ürün ismi ({input.Name}) adında başka bir ürün bulunmaktadır.");
             }
+
             // Kategori ID'lerinin geçerliliğini kontrol et
             if (input.CategoryIds != null)
             {
@@ -96,21 +106,37 @@ namespace CarpetProject.Products
                     }
                 }
             }
-            // Resim ID'lerinin geçerliliğini kontrol et
+
+            // Resim ID'lerinin geçerliliğini kontrol et ve ProductId güncellemesini yap
             if (input.ImageIds != null)
             {
                 foreach (var imageId in input.ImageIds)
                 {
-                    var imageExists = await _productImageRepository.AnyAsync(i => i.Id == imageId);
-                    if (!imageExists)
+                    var image = await _productImageRepository.FirstOrDefaultAsync(i => i.Id == imageId);
+                    if (image == null)
                     {
                         throw new UserFriendlyException($"Resim ID'si ({imageId}) geçerli değil.");
+                    }
+
+                    if (image.ProductId.HasValue && image.ProductId != id)
+                    {
+                        throw new UserFriendlyException($"Resim ID'si ({imageId}) zaten başka bir ürüne atanmış.");
+                    }
+
+                    // Eğer ProductId null ise, resmin ProductId değerini güncelle
+                    if (image.ProductId == null)
+                    {
+                        image.ProductId = product.Id;
+                        await _productImageRepository.UpdateAsync(image);
                     }
                 }
             }
 
+            // Ürün bilgilerini güncelle
             _mapper.Map(input, product);
             await _productRepository.UpdateAsync(product);
+
+            // Güncellenmiş ürünü DTO olarak geri döndür
             return _mapper.Map<Product, ProductDto>(product);
         }
 
@@ -124,7 +150,10 @@ namespace CarpetProject.Products
 
         public async Task<ProductDto> GetAsync(int id)
         {
-            var product = await _productRepository.GetAsync(id);
+            // Ürünü ve ilişkili resimleri dahil ederek getir
+            var productQuery = await _productRepository.WithDetailsAsync(p => p.Images);
+
+            var product = productQuery.FirstOrDefault(p => p.Id == id && !p.IsDeleted && p.IsApproved);
 
             //Ürünün mevcut olup olmadığını ve geçerli olup olmadığını kontrol et
             var products = await _productRepository.FirstOrDefaultAsync(p => !p.IsDeleted && p.IsApproved);
@@ -140,14 +169,17 @@ namespace CarpetProject.Products
 
         public async Task<PagedResultDto<ProductDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
-            // 1. Sorgu oluştur
-            var queryable = await _productRepository.GetQueryableAsync();
+
+            // 1. Sorgu oluştur ve ilişkili resimleri dahil et
+            var queryable = await _productRepository.WithDetailsAsync(p => p.Images);
 
             // 2. Yumuşak silinmiş ürünleri hariç tut
             queryable = queryable.Where(p => p.IsDeleted == false);
 
             // 3. Onaylı ürünleri listele
             queryable = queryable.Where(p => p.IsApproved);
+
+
             // 4. Sıralama
             if (!string.IsNullOrEmpty(input.Sorting))
             {
