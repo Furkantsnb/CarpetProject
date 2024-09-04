@@ -38,29 +38,33 @@ namespace CarpetProject.Products
             {
                 throw new UserFriendlyException($"Bu ürün ismi ({input.Name}) zaten başka bir ürün tarafından kullanılmıştır.");
             }
-
-            // Kategori ID'lerinin geçerliliğini kontrol et
-            if (input.CategoryIds != null)
-            {
-                foreach (var categoryId in input.CategoryIds)
-                {
-                    var categoryExists = await _categoryRepository.AnyAsync(c => c.Id == categoryId);
-                    if (!categoryExists)
-                    {
-                        throw new UserFriendlyException($"Kategori ID'si ({categoryId}) geçerli değil.");
-                    }
-                }
-            }
             // DTO'yu ürün entity'sine dönüştürün
             var product = _mapper.Map<CreateProductDto, Product>(input);
 
-            // Ürünü veritabanına ekleyin
+            // Kategori ID'lerinin geçerliliğini kontrol et ve ürüne kategorileri ekle
+            if (input.CategoryIds != null && input.CategoryIds.Any())
+            {
+                product.Categories = new List<Category>();
+
+                foreach (var categoryId in input.CategoryIds)
+                {
+                    var category = await _categoryRepository.FirstOrDefaultAsync(c => c.Id == categoryId);
+                    if (category == null)
+                    {
+                        throw new UserFriendlyException($"Kategori ID'si ({categoryId}) geçerli değil.");
+                    }
+
+                    product.Categories.Add(category);
+                }
+            }
+
+            // Ürünü veritabanına ekleyin ve Id'sini alın
             await _productRepository.InsertAsync(product);
 
             // Resim ID'lerinin geçerliliğini kontrol et ve ProductId güncellemesini yap
-            if (input.ImageIds != null)
+            if (input.Images != null)
             {
-                foreach (var imageId in input.ImageIds)
+                foreach (var imageId in input.Images)
                 {
                     var image = await _productImageRepository.FirstOrDefaultAsync(i => i.Id == imageId);
                     if (image == null)
@@ -78,6 +82,7 @@ namespace CarpetProject.Products
                     await _productImageRepository.UpdateAsync(image);
                 }
             }
+
             // Eklenen ürünü DTO olarak geri döndürün
             return _mapper.Map<Product, ProductDto>(product);
         }
@@ -94,23 +99,28 @@ namespace CarpetProject.Products
                 throw new UserFriendlyException($"Güncellenmek istenen ürün ismi ({input.Name}) adında başka bir ürün bulunmaktadır.");
             }
 
-            // Kategori ID'lerinin geçerliliğini kontrol et
-            if (input.CategoryIds != null)
+            // Kategori ID'lerinin geçerliliğini kontrol et ve ürüne kategorileri ekle
+            if (input.CategoryIds != null && input.CategoryIds.Any())
             {
+                // Eski kategorileri temizleyip yeni kategorileri ekle
+                product.Categories.Clear();
+
                 foreach (var categoryId in input.CategoryIds)
                 {
-                    var categoryExists = await _categoryRepository.AnyAsync(c => c.Id == categoryId);
-                    if (!categoryExists)
+                    var category = await _categoryRepository.FirstOrDefaultAsync(c => c.Id == categoryId);
+                    if (category == null)
                     {
                         throw new UserFriendlyException($"Kategori ID'si ({categoryId}) geçerli değil.");
                     }
+
+                    product.Categories.Add(category);
                 }
             }
 
             // Resim ID'lerinin geçerliliğini kontrol et ve ProductId güncellemesini yap
-            if (input.ImageIds != null)
+            if (input.Images != null)
             {
-                foreach (var imageId in input.ImageIds)
+                foreach (var imageId in input.Images)
                 {
                     var image = await _productImageRepository.FirstOrDefaultAsync(i => i.Id == imageId);
                     if (image == null)
@@ -150,8 +160,8 @@ namespace CarpetProject.Products
 
         public async Task<ProductDto> GetAsync(int id)
         {
-            // Ürünü ve ilişkili resimleri dahil ederek getir
-            var productQuery = await _productRepository.WithDetailsAsync(p => p.Images);
+            // Ürünü ve ilişkili resimleri ve kategorileri dahil ederek getir
+            var productQuery = await _productRepository.WithDetailsAsync(p => p.Images, p => p.Categories);
 
             var product = productQuery.FirstOrDefault(p => p.Id == id && !p.IsDeleted && p.IsApproved);
 
@@ -170,8 +180,8 @@ namespace CarpetProject.Products
         public async Task<PagedResultDto<ProductDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
 
-            // 1. Sorgu oluştur ve ilişkili resimleri dahil et
-            var queryable = await _productRepository.WithDetailsAsync(p => p.Images);
+           // 1. Sorgu oluştur ve ilişkili resimler ile kategorileri dahil et
+    var queryable = await _productRepository.WithDetailsAsync(p => p.Images, p => p.Categories);
 
             // 2. Yumuşak silinmiş ürünleri hariç tut
             queryable = queryable.Where(p => p.IsDeleted == false);

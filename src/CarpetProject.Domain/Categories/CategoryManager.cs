@@ -11,6 +11,7 @@ using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
+using Volo.CmsKit.Pages;
 
 namespace CarpetProject.Categories
 {
@@ -18,12 +19,14 @@ namespace CarpetProject.Categories
     {
         private readonly IRepository<Category, int> _categoryRepository;
         private readonly IRepository<Product, int> _productRepository;
+        private readonly IRepository<Image, int> _ımageRepository;
         private readonly IMapper _mapper;
 
-        public CategoryManager(IRepository<Category, int> categoryRepository, IRepository<Product, int> productRepository, IMapper mapper)
+        public CategoryManager(IRepository<Category, int> categoryRepository, IRepository<Product, int> productRepository, IRepository<Image, int> ımageRepository, IMapper mapper)
         {
             _categoryRepository = categoryRepository;
             _productRepository = productRepository;
+            _ımageRepository = ımageRepository;
             _mapper = mapper;
         }
 
@@ -55,8 +58,58 @@ namespace CarpetProject.Categories
 
             // 3. Yeni Kategoriyi Oluştur
             var category = _mapper.Map<CreateCategoryDto, Category>(input);
+
+            // 4. Resim ID'si Geçerli Olmalıdır ve Kategori ID'si Güncellenmelidir
+            if (input.ImageId.HasValue)
+            {
+                var image = await _ımageRepository.FirstOrDefaultAsync(i => i.Id == input.ImageId.Value);
+                if (image == null)
+                {
+                    throw new UserFriendlyException($"Resim ID'si ({input.ImageId}) geçerli değil.");
+                }
+
+                if (image.CategoryId.HasValue)
+                {
+                    throw new UserFriendlyException($"Resim ID'si ({input.ImageId}) zaten başka bir kategoriye atanmış.");
+                }
+
+                // Resmin kategori ID'sini güncelle
+                image.CategoryId = category.Id;
+                await _ımageRepository.UpdateAsync(image);
+            }
+
+
+            // 5. Ürün Listesini Güncelle
+            if (input.Products != null && input.Products.Any())
+            {
+                var productIds = input.Products.Distinct().ToList(); // Ürün ID'lerini benzersiz yap
+                var products = await _productRepository.GetListAsync(p => productIds.Contains(p.Id));
+
+                foreach (var product in products)
+                {
+                    if (product.Categories == null)
+                    {
+                        product.Categories = new HashSet<Category>();
+                    }
+
+                    if (!product.Categories.Any(c => c.Id == category.Id))
+                    {
+                        product.Categories.Add(category);
+                    }
+                }
+
+                // Ürünleri topluca güncelle
+                if (products.Any())
+                {
+                    await _productRepository.UpdateManyAsync(products);
+                }
+            }
+
+            // 6. Yeni Kategoriyi Oluştur
+            // Ürünleri kategoriye eklemek yerine, bu adımda sadece kategoriyi veritabanına ekliyoruz
             await _categoryRepository.InsertAsync(category);
 
+            // 7. DTO'ya Dönüştür ve Geri Döndür
             return _mapper.Map<Category, CategoryDto>(category);
         }
 
@@ -98,23 +151,75 @@ namespace CarpetProject.Categories
                 }
             }
 
-            // 4. DTO'yu mevcut kategoriye uygula
+            // 4. Resim ID'si Geçerli Olmalıdır ve Kategori ID'si Güncellenmelidir
+            if (input.ImageId.HasValue)
+            {
+                var image = await _ımageRepository.FirstOrDefaultAsync(i => i.Id == input.ImageId.Value);
+                if (image == null)
+                {
+                    throw new UserFriendlyException($"Resim ID'si ({input.ImageId}) geçerli değil.");
+                }
+
+                if (image.CategoryId.HasValue && image.CategoryId != id)
+                {
+                    throw new UserFriendlyException($"Resim ID'si ({input.ImageId}) zaten başka bir kategoriye atanmış.");
+                }
+
+                // Resmin kategori ID'sini güncelle
+                image.CategoryId = id;
+                await _ımageRepository.UpdateAsync(image);
+            }
+
+
+            // 5. Ürün Listesini Güncelle
+            if (input.Products != null && input.Products.Any())
+            {
+                var productIds = input.Products.Distinct().ToList(); // Ürün ID'lerini benzersiz yap
+                var products = await _productRepository.GetListAsync(p => productIds.Contains(p.Id));
+
+                foreach (var product in products)
+                {
+                    if (product.Categories == null)
+                    {
+                        product.Categories = new HashSet<Category>();
+                    }
+
+                    if (!product.Categories.Any(c => c.Id == category.Id))
+                    {
+                        product.Categories.Add(category);
+                    }
+                }
+
+                // Ürünleri topluca güncelle
+                if (products.Any())
+                {
+                    await _productRepository.UpdateManyAsync(products);
+                }
+            }
+
+            // 6. DTO'yu mevcut kategoriye uygula
             _mapper.Map(input, category);
             await _categoryRepository.UpdateAsync(category);
 
+            // 7. DTO'ya Dönüştür ve Geri Döndür
             return _mapper.Map<Category, CategoryDto>(category);
         }
 
         public async Task DeleteAsync(int id)
         {
             // 1. Kategori Var mı Kontrolü
-            var category = await _categoryRepository.GetAsync(id);
-         
-            //// 2. Alt Kategorilerin Olup Olmadığını Kontrol Et
-            //if (category.SubCategories != null && category.SubCategories.Any())
-            //{
-            //    throw new UserFriendlyException("Alt kategorilere sahip bir kategori silinemez. Lütfen önce alt kategorileri silin veya başka bir kategoriye taşıyın.");
-            //}
+            var category = await _categoryRepository.FirstOrDefaultAsync(c => c.Id == id);
+            if (category == null)
+            {
+                throw new UserFriendlyException($"Kategori ID'si ({id}) geçerli değil.");
+            }
+
+            // 2. Kategorinin Alt Kategorileri Kontrol Ediliyor
+            var subCategories = await _categoryRepository.GetListAsync(c => c.ParentCategoryId == id);
+            if (subCategories.Any())
+            {
+                throw new UserFriendlyException("Kategori alt kategorilere sahip. Lütfen önce alt kategorileri silin veya başka bir kategoriye taşıyın.");
+            }
 
             // 3. Kategorinin Aktif Ürünlerle İlişkili Olup Olmadığını Kontrol Et
             var hasActiveProducts = await _productRepository.AnyAsync(p => p.Categories.Any(c => c.Id == category.Id) && p.IsApproved);
@@ -122,45 +227,86 @@ namespace CarpetProject.Categories
             {
                 throw new UserFriendlyException("Aktif ürünlere sahip bir kategori silinemez. Lütfen önce ilgili ürünleri başka bir kategoriye taşıyın veya devre dışı bırakın.");
             }
+
+            // 4. Kategorinin İlişkili Resimlerini Güncelle
+            var images = await _ımageRepository.GetListAsync(i => i.CategoryId == id);
+            foreach (var image in images)
+            {
+                image.CategoryId = null; // Kategori ID'sini boşalt
+                await _ımageRepository.UpdateAsync(image);
+            }
+
+            // 5. Kategori Soft Delete ile Silinir
             category.IsDeleted = true;
-            // 4. Kategori Soft Delete ile Silinir
+
+
             await _categoryRepository.UpdateAsync(category);
         }
 
         public async Task<CategoryDto> GetAsync(int id)
         {
-            var category = await _categoryRepository.GetAsync(id);
-           
+            // Category ve ilişkili ürünleri dahil ederek getir
+            var CategoryQuery = await _categoryRepository.WithDetailsAsync(p => p.Products);
 
-            //Ürünün mevcut olup olmadığını ve geçerli olup olmadığını kontrol et
-            var Categorys = await _categoryRepository.FirstOrDefaultAsync(p => !p.IsDeleted && p.IsApproved);
+            var category = CategoryQuery.FirstOrDefault(p => p.Id == id && !p.IsDeleted && p.IsApproved);
 
-            if (Categorys == null)
+            if (category == null)
             {
                 throw new UserFriendlyException($"ID = {id} olan kategori silinmiş/onaylanmamış.");
             }
-            return _mapper.Map<Category, CategoryDto>(category);
+
+            // 1. Onaylı ve Silinmemiş Ürünleri Listele
+            var approvedProducts = category.Products
+                .Where(p => !p.IsDeleted && p.IsApproved)
+                .Select(p => p.Id) // Ürün ID'lerini al
+                .ToList();
+
+            // 2. DTO'ya dönüştür
+            var categoryDto = _mapper.Map<Category, CategoryDto>(category);
+
+            // 3. Ürün ID'lerini DTO'daki Products listesine ekle
+            categoryDto.Products = approvedProducts;
+
+            return categoryDto;
         }
 
         public async Task<PagedResultDto<CategoryDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
-            var queryable = await _categoryRepository.GetQueryableAsync();
+            var queryable = await _categoryRepository.WithDetailsAsync(c => c.Products);
 
-            // 2. Yumuşak silinmiş ürünleri hariç tut
-            queryable = queryable.Where(p => p.IsDeleted == false);
+            // 2. Yumuşak silinmiş kategorileri hariç tut
+            queryable = queryable.Where(p => !p.IsDeleted);
 
-            // 3. Onaylı ürünleri listele
+            // 3. Onaylı kategorileri listele
             queryable = queryable.Where(p => p.IsApproved);
 
             var totalCount = await AsyncExecuter.CountAsync(queryable);
 
-            var lines = await AsyncExecuter.ToListAsync(
+            var categories = await AsyncExecuter.ToListAsync(
                 queryable.OrderBy(a => a.Name)
                          .Skip(input.SkipCount)
                          .Take(input.MaxResultCount)
             );
 
-            var categoryDtos = _mapper.Map<List<Category>, List<CategoryDto>>(lines);
+            // Kategorilerin DTO'ya dönüştürülmesi
+            var categoryDtos = _mapper.Map<List<Category>, List<CategoryDto>>(categories);
+
+            // Her bir kategori için ürün ID'lerini filtreleyip DTO'ya ekleyin
+            foreach (var categoryDto in categoryDtos)
+            {
+                var category = categories.FirstOrDefault(c => c.Id == categoryDto.Id);
+                if (category != null)
+                {
+                    // Onaylı ve silinmemiş ürünlerin ID'lerini alın
+                    var approvedProductIds = category.Products
+                                                     .Where(p => !p.IsDeleted && p.IsApproved)
+                                                     .Select(p => p.Id)
+                                                     .ToList();
+
+                    // DTO'nun Products özelliğine bu ID'leri ekleyin
+                    categoryDto.Products = approvedProductIds;
+                }
+            }
 
             return new PagedResultDto<CategoryDto>(
                 totalCount,

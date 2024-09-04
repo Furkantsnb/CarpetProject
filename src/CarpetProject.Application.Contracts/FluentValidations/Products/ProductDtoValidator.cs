@@ -70,7 +70,7 @@ namespace CarpetProject.FluentValidations.Products
                 .WithMessage("Bir ürün en fazla 5 kategoriye atanabilir.");
 
             // Ürünün en az bir görsele sahip olduğunu kontrol eden kural
-            RuleFor(x => x.ImageIds)
+            RuleFor(x => x.Images)
                 .NotEmpty().WithMessage("Ürün için en az bir görsel yüklenmelidir.")
                 .Must(imageIds => imageIds != null && imageIds.Count <= 10)
                 .WithMessage("Ürün için en fazla 10 görsel yüklenebilir.");

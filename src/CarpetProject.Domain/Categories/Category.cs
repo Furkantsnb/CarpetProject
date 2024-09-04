@@ -19,7 +19,7 @@ namespace CarpetProject.Categories
         public bool IsApproved { get; set; }//Aktif mi değilmi Kontrolü
         public string ColorCode { get; set; } // Renk kodu
         public  Category ParentCategory { get; set; }//üst kategory
-        public  ICollection<Product> Products { get; set; }//kategorideki ürünler
+        public  ICollection<Product>? Products { get; set; }//kategorideki ürünler
         public  Image Image { get; set; } // Kategoriye ait resim (Birebir ilişki)
 
 

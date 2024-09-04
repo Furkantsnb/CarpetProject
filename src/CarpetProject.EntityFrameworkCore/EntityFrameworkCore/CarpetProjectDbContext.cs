@@ -100,7 +100,7 @@ public class CarpetProjectDbContext :
             .HasMany(p => p.Images)
             .WithOne(i => i.Product)
             .HasForeignKey(i => i.ProductId)
-            .OnDelete(DeleteBehavior.SetNull); // Product silindiðinde iliþkili Imagenin productý null olur
+            .OnDelete(DeleteBehavior.SetNull); // Product silindiðinde iliþkili Imagenin resmi null olur
 
         // Kategori ve Image arasýnda bire bir iliþki
         builder.Entity<Category>()

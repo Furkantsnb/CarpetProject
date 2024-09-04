@@ -10,18 +10,17 @@ namespace CarpetProject.Entities.Categories
 {
     public class UpdateCategoryDto
     {
-        public string Name { get; set; } // Kategori adı
-        public string Description { get; set; } // Kategori açıklaması
-        public int? ParentCategoryId { get; set; } // Üst kategori ID'si
-        public bool IsApproved { get; set; } // Kategori onay durumu
+        public string Name { get; set; }
+        public string Description { get; set; }
+        public int? ImageId { get; set; }
+        public int? ParentCategoryId { get; set; }
+        public bool IsApproved { get; set; }//Aktif mi değilmi Kontrolü
         public string ColorCode { get; set; } // Renk kodu
 
-        public List<int>? Products { get; set; } // Bu kategoriye ait ürünler
-        public int ImageId { get; set; } // Kategoriye ait resim
+        public List<int>? Products { get; set; }
 
         public UpdateCategoryDto()
         {
-
             Products = new List<int>();
         }
 

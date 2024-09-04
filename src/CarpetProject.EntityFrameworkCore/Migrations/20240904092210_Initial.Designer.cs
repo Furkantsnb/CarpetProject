@@ -13,7 +13,7 @@ using Volo.Abp.EntityFrameworkCore;
 namespace CarpetProject.Migrations
 {
     [DbContext(typeof(CarpetProjectDbContext))]
-    [Migration("20240901122540_Initial")]
+    [Migration("20240904092210_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -2874,12 +2874,12 @@ namespace CarpetProject.Migrations
                     b.HasOne("CarpetProject.Categories.Category", "Category")
                         .WithOne("Image")
                         .HasForeignKey("CarpetProject.Products.Image", "CategoryId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.HasOne("CarpetProject.Products.Product", "Product")
-                        .WithMany("ProductImages")
+                        .WithMany("Images")
                         .HasForeignKey("ProductId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .OnDelete(DeleteBehavior.SetNull);
 
                     b.Navigation("Category");
 
@@ -3062,7 +3062,7 @@ namespace CarpetProject.Migrations
 
             modelBuilder.Entity("CarpetProject.Products.Product", b =>
                 {
-                    b.Navigation("ProductImages");
+                    b.Navigation("Images");
                 });
 
             modelBuilder.Entity("Volo.Abp.AuditLogging.AuditLog", b =>

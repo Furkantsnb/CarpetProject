@@ -5,19 +5,20 @@ using CarpetProject.Entities.Products;
 using CarpetProject.EntityDto.ProductImages;
 
 using CarpetProject.Products;
+using Microsoft.AspNetCore.Routing.Constraints;
 using System.Linq;
 
 namespace CarpetProject;
 
 public class CarpetProjectApplicationAutoMapperProfile : Profile
 {
+
     public CarpetProjectApplicationAutoMapperProfile()
     {
         CreateMap<Product, ProductDto>().ReverseMap();
-        CreateMap<Product,CreateProductDto>().ReverseMap();
-        CreateMap<Product,UpdateProductDto>().ReverseMap();
-        CreateMap<Product, ProductDto>()
-    .ForMember(dest => dest.ImageIds, opt => opt.MapFrom(src => src.Images.Select(pi => pi.Id).ToList()));
+        CreateMap<Product, CreateProductDto>().ReverseMap();
+        CreateMap<Product, UpdateProductDto>().ReverseMap();
+
         CreateMap<Image, ImageDto>().ReverseMap();
         CreateMap<Image, CreateImageDto>().ReverseMap();
         CreateMap<Image, UpdateImageDto>().ReverseMap();
@@ -27,23 +28,12 @@ public class CarpetProjectApplicationAutoMapperProfile : Profile
         CreateMap<Category, CreateCategoryDto>().ReverseMap();
         CreateMap<Category, UpdateCategoryDto>().ReverseMap();
 
-     
+        CreateMap<CreateCategoryDto, Category>()
+      .ForMember(dest => dest.Products, opt => opt.Ignore()); // Ürünleri dikkate almayın
+
+        CreateMap<Category, CategoryDto>()
+            .ForMember(dest => dest.Products, opt => opt.MapFrom(src => src.Products.Select(p => p.Id).ToList()));
 
 
-
-
-
-        //// Custom mappings for ignoring certain properties
-        //CreateMap<CreateProductDto, Product>()
-        //    .ForMember(dest => dest.Categories, opt => opt.Ignore());
-
-        //CreateMap<UpdateProductDto, Product>()
-        //    .ForMember(dest => dest.Categories, opt => opt.Ignore());
-
-        //// Product -> ProductWithCategoryDto mapping
-        //CreateMap<Product, ProductWithCategoryDto>()
-        //    .ForMember(dest => dest.Product, opt => opt.MapFrom(src => src))
-        //    .ForMember(dest => dest.Category, opt => opt.MapFrom(src => src.Categories.FirstOrDefault()))
-        //    .ForMember(dest => dest.ProductCountInCategory, opt => opt.Ignore());
     }
 }

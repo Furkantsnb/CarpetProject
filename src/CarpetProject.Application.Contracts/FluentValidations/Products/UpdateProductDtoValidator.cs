@@ -61,7 +61,7 @@ namespace CarpetProject.FluentValidations.Products
                 .NotEmpty().WithMessage("Ürün en az bir kategoriye atanmalıdır.");
 
             // Ürünün en az bir görsele sahip olduğunu kontrol eden kural
-            RuleFor(x => x.ImageIds)
+            RuleFor(x => x.Images)
                 .NotEmpty().WithMessage("Ürün için en az bir görsel yüklenmelidir.");
         }
     }
