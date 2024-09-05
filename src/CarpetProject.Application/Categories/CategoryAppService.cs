@@ -39,9 +39,9 @@ namespace CarpetProject.Categories
             return await _categoryManager.GetAsync(id);
         }
 
-        public override Task<PagedResultDto<CategoryDto>> GetListAsync(PagedAndSortedResultRequestDto input)
+        public override async Task<PagedResultDto<CategoryDto>> GetListAsync(PagedAndSortedResultRequestDto input)
         {
-            return base.GetListAsync(input);
+            return await _categoryManager.GetListAsync(input);
         }
 
         public async Task HartDeleteAsync(int id)

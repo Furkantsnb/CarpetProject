@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Volo.Abp.Domain.Entities;
 
 namespace CarpetProject.Categories
 {
-    public class CategoryProduct
+    public class CategoryProduct:Entity<int>
     {
         public int CategoryId { get; set; }
         public Category Category { get; set; }
