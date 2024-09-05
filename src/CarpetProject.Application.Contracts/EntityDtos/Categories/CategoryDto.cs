@@ -11,19 +11,22 @@ namespace CarpetProject.Entities.Categories
 {
     public class CategoryDto: FullAuditedEntityDto<int>
     {
+        public int Id { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
         public int? ImageId { get; set; }
         public int? ParentCategoryId { get; set; }
-        public bool IsApproved { get; set; }//Aktif mi değilmi Kontrolü
-        public string ColorCode { get; set; } // Renk kodu
+        public bool IsApproved { get; set; }
+        public string ColorCode { get; set; }
 
-        public List<int>? Products { get; set; }
+        // Kategoriye ait resim
+        public ImageDto Image { get; set; }
 
-        public CategoryDto()
-        {
-          Products=new List<int>();
-        }
+        // Alt kategori (üstsüz kategori)
+        public CategoryDto ParentCategory { get; set; }
+
+        // Kategori ürünleri DTO'ları
+        public List<ProductDto> Products { get; set; } = new List<ProductDto>();
 
     }
 }

@@ -20,6 +20,7 @@ namespace CarpetProject.Categories
         private readonly IRepository<Category, int> _categoryRepository;
         private readonly IRepository<Product, int> _productRepository;
         private readonly IRepository<Image, int> _ımageRepository;
+
         private readonly IMapper _mapper;
 
         public CategoryManager(IRepository<Category, int> categoryRepository, IRepository<Product, int> productRepository, IRepository<Image, int> ımageRepository, IMapper mapper)
@@ -78,33 +79,37 @@ namespace CarpetProject.Categories
                 await _ımageRepository.UpdateAsync(image);
             }
 
-
-            // 5. Ürün Listesini Güncelle
-            if (input.Products != null && input.Products.Any())
+            // 5. Ürünleri Kontrol Et ve Benzersiz Olmalarını Sağla
+            if (input.ProductIds != null && input.ProductIds.Any())
             {
-                var productIds = input.Products.Distinct().ToList(); // Ürün ID'lerini benzersiz yap
-                var products = await _productRepository.GetListAsync(p => productIds.Contains(p.Id));
+                var productIds = input.ProductIds.Distinct().ToList(); // Ürün ID'lerini benzersiz yap
+                var existingProducts = await _productRepository.GetListAsync(p => productIds.Contains(p.Id));
+                var existingProductIds = existingProducts.Select(p => p.Id).ToList();
 
-                foreach (var product in products)
+                // Girilen ürün ID'lerinden veritabanında mevcut olmayanları kontrol et
+                var invalidProductIds = productIds.Except(existingProductIds).ToList();
+                if (invalidProductIds.Any())
                 {
-                    if (product.Categories == null)
-                    {
-                        product.Categories = new HashSet<Category>();
-                    }
-
-                    if (!product.Categories.Any(c => c.Id == category.Id))
-                    {
-                        product.Categories.Add(category);
-                    }
+                    throw new UserFriendlyException($"Aşağıdaki ürün ID'leri geçerli değil: {string.Join(", ", invalidProductIds)}");
                 }
 
-                // Ürünleri topluca güncelle
-                if (products.Any())
+                // Tekrar eden ürün ID'lerini kontrol et
+                var duplicateProductIds = productIds.GroupBy(id => id).Where(g => g.Count() > 1).Select(g => g.Key).ToList();
+                if (duplicateProductIds.Any())
                 {
-                    await _productRepository.UpdateManyAsync(products);
+                    throw new UserFriendlyException($"Aşağıdaki ürün ID'leri tekrar edilmiş: {string.Join(", ", duplicateProductIds)}");
+                }
+
+                // Geçerli ürünlerle ilişkileri güncelle
+                foreach (var product in existingProducts)
+                {
+                    await _categoryProductRepository.InsertAsync(new CategoryProduct
+                    {
+                        CategoryId = category.Id,
+                        ProductId = product.Id
+                    });
                 }
             }
-
             // 6. Yeni Kategoriyi Oluştur
             // Ürünleri kategoriye eklemek yerine, bu adımda sadece kategoriyi veritabanına ekliyoruz
             await _categoryRepository.InsertAsync(category);
@@ -256,16 +261,14 @@ namespace CarpetProject.Categories
             }
 
             // 1. Onaylı ve Silinmemiş Ürünleri Listele
-            var approvedProducts = category.Products
-                .Where(p => !p.IsDeleted && p.IsApproved)
-                .Select(p => p.Id) // Ürün ID'lerini al
-                .ToList();
+            var approvedProducts = category.Products;
+                
 
             // 2. DTO'ya dönüştür
             var categoryDto = _mapper.Map<Category, CategoryDto>(category);
 
             // 3. Ürün ID'lerini DTO'daki Products listesine ekle
-            categoryDto.Products = approvedProducts;
+            //categoryDto.Products = approvedProducts;
 
             return categoryDto;
         }
@@ -291,22 +294,22 @@ namespace CarpetProject.Categories
             // Kategorilerin DTO'ya dönüştürülmesi
             var categoryDtos = _mapper.Map<List<Category>, List<CategoryDto>>(categories);
 
-            // Her bir kategori için ürün ID'lerini filtreleyip DTO'ya ekleyin
-            foreach (var categoryDto in categoryDtos)
-            {
-                var category = categories.FirstOrDefault(c => c.Id == categoryDto.Id);
-                if (category != null)
-                {
-                    // Onaylı ve silinmemiş ürünlerin ID'lerini alın
-                    var approvedProductIds = category.Products
-                                                     .Where(p => !p.IsDeleted && p.IsApproved)
-                                                     .Select(p => p.Id)
-                                                     .ToList();
+            //// Her bir kategori için ürün ID'lerini filtreleyip DTO'ya ekleyin
+            //foreach (var categoryDto in categoryDtos)
+            //{
+            //    var category = categories.FirstOrDefault(c => c.Id == categoryDto.Id);
+            //    if (category != null)
+            //    {
+            //        // Onaylı ve silinmemiş ürünlerin ID'lerini alın
+            //        var approvedProductIds = category.Products
+            //                                         .Where(p => !p.IsDeleted && p.IsApproved)
+            //                                         .Select(p => p.Id)
+            //                                         .ToList();
 
-                    // DTO'nun Products özelliğine bu ID'leri ekleyin
-                    categoryDto.Products = approvedProductIds;
-                }
-            }
+            //        // DTO'nun Products özelliğine bu ID'leri ekleyin
+            //        categoryDto.Products = approvedProductIds;
+            //    }
+            //}
 
             return new PagedResultDto<CategoryDto>(
                 totalCount,

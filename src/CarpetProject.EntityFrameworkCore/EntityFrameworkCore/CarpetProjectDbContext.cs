@@ -62,6 +62,7 @@ public class CarpetProjectDbContext :
     public DbSet<Category> Categories { get; set; }
     public DbSet<Product> Products { get; set; }
     public DbSet<Image> Images { get; set; }
+    public DbSet<CategoryProduct> CategoryProducts { get; set; }
 
 
     #endregion
@@ -88,12 +89,19 @@ public class CarpetProjectDbContext :
         builder.ConfigureTenantManagement();
 
 
-        
-        // Product ve Category arasýnda çoka çok iliþki
-        builder.Entity<Product>()
-            .HasMany(p => p.Categories)
-            .WithMany(c => c.Products)
-            .UsingEntity(j => j.ToTable("ProductCategories")); // Ara tablo ismi
+
+        builder.Entity<CategoryProduct>()
+            .HasKey(cp => new { cp.CategoryId, cp.ProductId });
+
+        builder.Entity<CategoryProduct>()
+            .HasOne(cp => cp.Category)
+            .WithMany(c => c.CategoryProducts)
+            .HasForeignKey(cp => cp.CategoryId);
+
+        builder.Entity<CategoryProduct>()
+            .HasOne(cp => cp.Product)
+            .WithMany(p => p.CategoryProducts)
+            .HasForeignKey(cp => cp.ProductId);
 
         // Product ve Image arasýnda bire çok iliþki
         builder.Entity<Product>()

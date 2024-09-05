@@ -12,6 +12,6 @@ namespace CarpetProject.EntityDto.ProductImages
         public string Name { get; set; }
         public int? CategoryId { get; set; }
         public int? ProductId { get; set; }
-        public IFormFile ImageFile { get; set; } // Dosya yükleme için IFormFile kullanıyoruz
+        public IFormFile ImageUrl { get; set; } // Dosya yükleme için IFormFile kullanıyoruz
     }
 }

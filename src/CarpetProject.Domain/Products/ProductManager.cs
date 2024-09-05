@@ -32,14 +32,17 @@ namespace CarpetProject.Products
 
         public async Task<ProductDto> CreateAsync(CreateProductDto input)
         {
+
             // Aynı isimde başka bir ürün olup olmadığını kontrol et
             var isProductNameExists = await _productRepository.AnyAsync(p => p.Name == input.Name);
             if (isProductNameExists)
             {
                 throw new UserFriendlyException($"Bu ürün ismi ({input.Name}) zaten başka bir ürün tarafından kullanılmıştır.");
             }
+
             // DTO'yu ürün entity'sine dönüştürün
             var product = _mapper.Map<CreateProductDto, Product>(input);
+
 
             // Kategori ID'lerinin geçerliliğini kontrol et ve ürüne kategorileri ekle
             if (input.CategoryIds != null && input.CategoryIds.Any())
@@ -54,12 +57,13 @@ namespace CarpetProject.Products
                         throw new UserFriendlyException($"Kategori ID'si ({categoryId}) geçerli değil.");
                     }
 
+
                     product.Categories.Add(category);
                 }
+
             }
 
-            // Ürünü veritabanına ekleyin ve Id'sini alın
-            await _productRepository.InsertAsync(product);
+          
 
             // Resim ID'lerinin geçerliliğini kontrol et ve ProductId güncellemesini yap
             if (input.Images != null)
@@ -79,10 +83,13 @@ namespace CarpetProject.Products
 
                     // ProductId'yi güncelle
                     image.ProductId = product.Id;
+               
                     await _productImageRepository.UpdateAsync(image);
                 }
             }
 
+            // Ürünü veritabanına ekleyin ve Id'sini alın
+            await _productRepository.InsertAsync(product);
             // Eklenen ürünü DTO olarak geri döndürün
             return _mapper.Map<Product, ProductDto>(product);
         }

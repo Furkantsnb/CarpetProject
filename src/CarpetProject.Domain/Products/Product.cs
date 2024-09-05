@@ -15,7 +15,8 @@ namespace CarpetProject.Products
 {
     public class Product : FullAuditedEntity<int>
     {
-      
+       
+   
         public string Name { get; set; }
         public decimal Price { get; set; } // Yeni fiyat 
         public bool HasDiscount { get; set; }//indirim var mı
@@ -26,18 +27,9 @@ namespace CarpetProject.Products
         public string? Usage { get; set; }//ürün nasıl kullanılmalı
         public string? AdditionalInfo { get; set; }//ek bilgi     
         public bool IsApproved { get; set; }//Aktif mi değilmi Kontrolü
-      
-        public virtual ICollection<Category> Categories { get; set; }
-        public virtual ICollection<Image>? Images { get; set; }
+
+        public List<CategoryProduct> CategoryProducts { get; set; } = new List<CategoryProduct>();
+        public List<Image>? Images { get; set; } = new List<Image>();
         
-
-
-
-        public Product()
-        {
-            Categories = new HashSet<Category>();
-            Images = new HashSet<Image>();
-            
-        }
     }
 }

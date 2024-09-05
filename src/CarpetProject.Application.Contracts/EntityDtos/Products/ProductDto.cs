@@ -13,27 +13,21 @@ namespace CarpetProject.Entities.Products
     public class ProductDto : FullAuditedEntityDto<int>
     {
         public string Name { get; set; }
-        public decimal Price { get; set; } // Yeni fiyat 
-        public bool HasDiscount { get; set; }//indirim var mı
-        public decimal? OldPrice { get; set; } // Eski fiyat (indirim uygulanmışsa)
-        public bool Certification { get; set; }//serfikası var mı?
-        public string Description { get; set; }//açıklama
-        public string? Ingredients { get; set; }//ürün içeriği
-        public string? Usage { get; set; }//ürün nasıl kullanılmalı
-        public string? AdditionalInfo { get; set; }//ek bilgi     
-        public bool IsApproved { get; set; }//Aktif mi değilmi Kontrolü
+        public decimal Price { get; set; }
+        public bool HasDiscount { get; set; }
+        public decimal? OldPrice { get; set; }
+        public bool Certification { get; set; }
+        public string Description { get; set; }
+        public string? Ingredients { get; set; }
+        public string? Usage { get; set; }
+        public string? AdditionalInfo { get; set; }
+        public bool IsApproved { get; set; }
 
-        // Bir ürünün atanacağı kategori ID'lerini tutan liste
-        public List<int> CategoryIds { get; set; }
+        // Kategori DTO'ları
+        public List<CategoryDto> Categories { get; set; } = new List<CategoryDto>();
 
-        // Ürün için yüklenen görsellerin ID'lerini tutan liste
-        public List<int>? Images { get; set; }
-
-        public ProductDto()
-        {
-            CategoryIds = new List<int>();
-            Images = new List<int>();
-        }
+        // Resim DTO'ları
+        public List<ImageDto> Images { get; set; } = new List<ImageDto>();
 
     }
 }
