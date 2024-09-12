@@ -5,10 +5,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Entities;
+using Volo.Abp.Domain.Entities.Auditing;
 
 namespace CarpetProject.Categories
 {
-    public class CategoryProduct:Entity<int>
+    public class CategoryProduct: FullAuditedEntity<int>
     {
         public int CategoryId { get; set; }
         public Category Category { get; set; }

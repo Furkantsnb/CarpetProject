@@ -137,17 +137,28 @@ namespace CarpetProject
         public async Task<List<Image>> SeedImagesAsync()
         {
             var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/DataSeedImage/");
-
+            var categories = await _categoryRepository.GetListAsync();
+            var products = await _productRepository.GetListAsync();
             var images = new List<Image>
     {
-        new Image { Name = "Image 1", ImageUrl = Path.Combine(basePath, "12-Photoroom.png") },
+        new Image { Name = "Image 1", ImageUrl = Path.Combine(basePath, "12-Photoroom.png")},
         new Image { Name = "Image 2", ImageUrl = Path.Combine(basePath, "13-Photoroom.png") },
         new Image { Name = "Image 3", ImageUrl = Path.Combine(basePath, "b587adde-548d-46c1-b26d-9a6754c055d3.jpg") }
     };
 
-            foreach (var image in images)
+            for (int i = 0; i < images.Count; i++)
             {
-                await _imageRepository.InsertAsync(image, autoSave: true);
+                if (i < categories.Count)
+                {
+                    images[i].CategoryId = categories[i].Id;
+                }
+
+                if (i < products.Count)
+                {
+                    images[i].ProductId = products[i].Id;
+                }
+
+                await _imageRepository.InsertAsync(images[i], autoSave: true);
             }
 
             return images;
