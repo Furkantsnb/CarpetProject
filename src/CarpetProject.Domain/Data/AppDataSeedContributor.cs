@@ -125,36 +125,57 @@ namespace CarpetProject
             await _categoryProductRepository.InsertAsync(new CategoryProduct { ProductId = product3.Id, CategoryId = category3.Id }, autoSave: true);
 
             // Görsel seed
-            var basePath = "/images/DataSeedImage/";
+            // Resimleri seed et
+         
+            var images = await SeedImagesAsync();
 
-            var image1 = new Image
+            // Kategori ve ürünleri güncelle
+            await UpdateCategoryAndProductImagesAsync(images);
+
+        }
+
+        public async Task<List<Image>> SeedImagesAsync()
+        {
+            var basePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/images/DataSeedImage/");
+
+            var images = new List<Image>
+    {
+        new Image { Name = "Image 1", ImageUrl = Path.Combine(basePath, "12-Photoroom.png") },
+        new Image { Name = "Image 2", ImageUrl = Path.Combine(basePath, "13-Photoroom.png") },
+        new Image { Name = "Image 3", ImageUrl = Path.Combine(basePath, "b587adde-548d-46c1-b26d-9a6754c055d3.jpg") }
+    };
+
+            foreach (var image in images)
             {
-                Name = "Image 1",
-                ImageUrl = $"{basePath}12-Photoroom.png",
-                ProductId = product1.Id,
-                CategoryId = category1.Id
-            };
+                await _imageRepository.InsertAsync(image, autoSave: true);
+            }
 
-            var image2 = new Image
+            return images;
+        }
+        public async Task UpdateCategoryAndProductImagesAsync(List<Image> images)
+        {
+            var categories = await _categoryRepository.GetListAsync();
+            var products = await _productRepository.GetListAsync();
+
+            foreach (var image in images)
             {
-                Name = "Image 2",
-                ImageUrl = $"{basePath}13-Photoroom.png",
-                ProductId = product2.Id,
-                CategoryId = category2.Id
-            };
+                var category = categories.FirstOrDefault(c => c.Id == image.CategoryId);
+                var product = products.FirstOrDefault(p => p.Id == image.ProductId);
 
-            var image3 = new Image
-            {
-                Name = "Image 3",
-                ImageUrl = $"{basePath}b587adde-548d-46c1-b26d-9a6754c055d3.jpg",
-                ProductId = product3.Id,
-                CategoryId = category3.Id
-            };
+                if (category != null)
+                {
+                    // Güncellenmiş: Kategori için tek bir resim ID'si ayarlanır
+                    category.ImageId = image.Id;
+                    await _categoryRepository.UpdateAsync(category, autoSave: true);
+                }
 
-            await _imageRepository.InsertAsync(image1, autoSave: true);
-            await _imageRepository.InsertAsync(image2, autoSave: true);
-            await _imageRepository.InsertAsync(image3, autoSave: true);
-        
+                if (product != null)
+                {
+                    // Ürün için resimler listesine eklenir
+                    product.Images.Add(image);
+                    await _productRepository.UpdateAsync(product, autoSave: true);
+                }
+            }
         }
     }
 
