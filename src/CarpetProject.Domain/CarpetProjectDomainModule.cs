@@ -15,6 +15,7 @@ using Volo.Abp.PermissionManagement.OpenIddict;
 using Volo.Abp.SettingManagement;
 using Volo.Abp.TenantManagement;
 using Volo.CmsKit;
+using Volo.Abp.Data;
 
 
 
@@ -64,8 +65,9 @@ namespace CarpetProject;
         {
             options.IsEnabled = MultiTenancyConsts.IsEnabled;
         });
-
+       
 #if DEBUG
+
         context.Services.Replace(ServiceDescriptor.Singleton<IEmailSender, NullEmailSender>());
 #endif
     }

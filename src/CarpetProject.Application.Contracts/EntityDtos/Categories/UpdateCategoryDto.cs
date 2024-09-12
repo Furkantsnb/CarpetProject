@@ -18,7 +18,7 @@ namespace CarpetProject.Entities.Categories
         public string ColorCode { get; set; }
 
         // Kategori ürünleri ID'leri
-        public List<int> ProductIds { get; set; } = new List<int>();
+        public List<int>? ProductIds { get; set; } = new List<int>();
 
 
     }

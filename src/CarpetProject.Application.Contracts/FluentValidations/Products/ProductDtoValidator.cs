@@ -64,7 +64,7 @@ namespace CarpetProject.FluentValidations.Products
 
 
             // Ürünün en az bir kategoriye atanmış olduğunu kontrol eden kural
-            RuleFor(x => x.CategoryIds)
+            RuleFor(x => x.Categories)
                 .NotEmpty().WithMessage("Ürün en az bir kategoriye atanmalıdır.")
                 .Must(categoryIds => categoryIds != null && categoryIds.Count <= 5)
                 .WithMessage("Bir ürün en fazla 5 kategoriye atanabilir.");

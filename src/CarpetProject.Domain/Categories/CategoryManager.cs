@@ -11,6 +11,7 @@ using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
+using Volo.Abp.Uow;
 using Volo.CmsKit.Pages;
 
 namespace CarpetProject.Categories
@@ -22,14 +23,16 @@ namespace CarpetProject.Categories
         private readonly IRepository<Image, int> _ımageRepository;
         private readonly IRepository<CategoryProduct,int> _CategoryProductRepository;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWorkManager _unitOfWorkManager;
 
-        public CategoryManager(IRepository<Category, int> categoryRepository, IRepository<Product, int> productRepository, IRepository<Image, int> ımageRepository, IRepository<CategoryProduct,int> categoryProductRepository, IMapper mapper)
+        public CategoryManager(IRepository<Category, int> categoryRepository, IRepository<Product, int> productRepository, IRepository<Image, int> ımageRepository, IRepository<CategoryProduct, int> categoryProductRepository, IMapper mapper, IUnitOfWorkManager unitOfWorkManager)
         {
             _categoryRepository = categoryRepository;
             _productRepository = productRepository;
             _ımageRepository = ımageRepository;
             _CategoryProductRepository = categoryProductRepository;
             _mapper = mapper;
+            _unitOfWorkManager = unitOfWorkManager;
         }
 
         public async Task<CategoryDto> CreateAsync(CreateCategoryDto input)
@@ -60,7 +63,8 @@ namespace CarpetProject.Categories
 
             // 3. Yeni Kategoriyi Oluştur
             var category = _mapper.Map<CreateCategoryDto, Category>(input);
-
+            await _categoryRepository.InsertAsync(category);
+            await _unitOfWorkManager.Current.SaveChangesAsync(); // ID'nin oluşturulması için
             // 4. Resim ID'si Geçerli Olmalıdır ve Kategori ID'si Güncellenmelidir
             if (input.ImageId.HasValue)
             {
@@ -111,9 +115,8 @@ namespace CarpetProject.Categories
                     });
                 }
             }
-            // 6. Yeni Kategoriyi Oluştur
-            // Ürünleri kategoriye eklemek yerine, bu adımda sadece kategoriyi veritabanına ekliyoruz
-            await _categoryRepository.InsertAsync(category);
+
+          
 
             // 7. DTO'ya Dönüştür ve Geri Döndür
             return _mapper.Map<Category, CategoryDto>(category);
@@ -271,9 +274,9 @@ namespace CarpetProject.Categories
             var categoryProducts = await _CategoryProductRepository.GetListAsync(cp => cp.CategoryId == id);
 
             // 3. Onaylı ve silinmemiş ürünleri filtreleyin
+            var productIds = categoryProducts.Select(cp => cp.ProductId).Distinct().ToList();
             var approvedProducts = await _productRepository.GetListAsync(p =>
-                categoryProducts.Select(cp => cp.ProductId).Contains(p.Id) &&
-                !p.IsDeleted && p.IsApproved
+                productIds.Contains(p.Id) && !p.IsDeleted && p.IsApproved
             );
 
             // 4. DTO'ya dönüştür

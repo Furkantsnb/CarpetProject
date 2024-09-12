@@ -27,7 +27,7 @@ namespace CarpetProject.Entities.Products
         public List<int> CategoryIds { get; set; } = new List<int>();
 
         // Resim ID'leri
-        public List<int> ImageIds { get; set; } = new List<int>();
+        public List<int>? ImageIds { get; set; } = new List<int>();
 
 
     }

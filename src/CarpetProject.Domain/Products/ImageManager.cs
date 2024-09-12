@@ -67,7 +67,7 @@ namespace CarpetProject.Products
             }
 
             // Resmi MinIO'ya yükleyin
-            var blobName = Guid.NewGuid().ToString("N") + Path.GetExtension(input.ImageFile.FileName);
+            var blobName = Guid.NewGuid().ToString("N") + Path.GetExtension(input.ImageUrl.FileName);
 
             // Resim dosyasını okuyup byte array'e çevirin
             byte[] imageBytes;
@@ -75,7 +75,7 @@ namespace CarpetProject.Products
             {
                 using (var memoryStream = new MemoryStream())
                 {
-                    await input.ImageFile.CopyToAsync(memoryStream);
+                    await input.ImageUrl.CopyToAsync(memoryStream);
                     imageBytes = memoryStream.ToArray();
                 }
             }
@@ -87,21 +87,34 @@ namespace CarpetProject.Products
             await _blobContainer.SaveAsync(blobName, imageBytes);
 
             // DTO'yu ürün resim entity'sine dönüştürün ve MinIO URL'ini ayarlayın
-            var productImage = _mapper.Map<CreateImageDto, Image>(input);
-            productImage.ImageUrl = blobName; // MinIO'daki resim URL'sini ayarlayın
+            var image = _mapper.Map<CreateImageDto, Image>(input);
+            image.ImageUrl = blobName; // MinIO'daki resim URL'sini ayarlayın
 
             // Resmi veritabanına ekleyin
-            await _productImage.InsertAsync(productImage);
+            await _productImage.InsertAsync(image);
+            // Kategori ve Ürün ilişkilendirmelerini güncelleyin
+            if (input.CategoryId.HasValue)
+            {
+                var category = await _categoryRepository.GetAsync(input.CategoryId.Value);
+                category.ImageId = image.Id;
+                await _categoryRepository.UpdateAsync(category);
+            }
 
+            if (input.ProductId.HasValue)
+            {
+                var product = await _productRepository.GetAsync(input.ProductId.Value);
+                product.Images.Add(image); // Resim ID'sini ürünün resim ID'leri listesine ekleyin
+                await _productRepository.UpdateAsync(product);
+            }
             // Eklenen resmi DTO olarak geri döndürün
-            return _mapper.Map<Image, ImageDto>(productImage);
+            return _mapper.Map<Image, ImageDto>(image);
         }
 
         public async Task<ImageDto> UpdateAsync(int id, UpdateImageDto input)
         {
             // Güncellenmekte olan resim kaydını al
-            var productImage = await _productImage.GetAsync(id);
-            if (productImage == null)
+            var image = await _productImage.GetAsync(id);
+            if (image == null)
             {
                 throw new UserFriendlyException($"Resim ID'si ({id}) geçerli değil.");
             }
@@ -135,9 +148,9 @@ namespace CarpetProject.Products
             }
 
             // Eğer yeni bir resim dosyası sağlanmışsa, resmi MinIO'ya yükleyin
-            if (input.ImageFile != null && input.ImageFile.Length > 0)
+            if (input.ImageUrl != null && input.ImageUrl.Length > 0)
             {
-                var blobName = Guid.NewGuid().ToString("N") + Path.GetExtension(input.ImageFile.FileName);
+                var blobName = Guid.NewGuid().ToString("N") + Path.GetExtension(input.ImageUrl.FileName);
 
                 // Resim dosyasını okuyup byte array'e çevirin
                 byte[] imageBytes;
@@ -145,7 +158,7 @@ namespace CarpetProject.Products
                 {
                     using (var memoryStream = new MemoryStream())
                     {
-                        await input.ImageFile.CopyToAsync(memoryStream);
+                        await input.ImageUrl.CopyToAsync(memoryStream);
                         imageBytes = memoryStream.ToArray();
                     }
                 }
@@ -160,17 +173,31 @@ namespace CarpetProject.Products
                 await _blobContainer.SaveAsync(blobName, imageBytes);
 
                 // MinIO URL'ini güncelle
-                productImage.ImageUrl = blobName;
+                image.ImageUrl = blobName;
             }
 
             // Diğer alanları güncelle
-            _mapper.Map(input, productImage);
+            _mapper.Map(input, image);
 
             // Resmi veritabanında güncelle
-            await _productImage.UpdateAsync(productImage);
+            await _productImage.UpdateAsync(image);
 
+            // Kategori ve Ürün ilişkilendirmelerini güncelleyin
+            if (input.CategoryId.HasValue)
+            {
+                var category = await _categoryRepository.GetAsync(input.CategoryId.Value);
+                category.ImageId = image.Id;
+                await _categoryRepository.UpdateAsync(category);
+            }
+
+            if (input.ProductId.HasValue)
+            {
+                var product = await _productRepository.GetAsync(input.ProductId.Value);
+                product.Images.Add(image); // Resim ID'sini ürünün resim ID'leri listesine ekleyin
+                await _productRepository.UpdateAsync(product);
+            }
             // Güncellenen resmi DTO olarak geri döndür
-            return _mapper.Map<Image, ImageDto>(productImage);
+            return _mapper.Map<Image, ImageDto>(image);
         }
 
         public async Task DeleteAsync(int id)

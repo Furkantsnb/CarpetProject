@@ -90,13 +90,15 @@ public class CarpetProjectDbContext :
 
 
 
+        // CategoryProduct ve Product iliþkileri için yapýlandýrma
         builder.Entity<CategoryProduct>()
             .HasKey(cp => new { cp.CategoryId, cp.ProductId });
 
         builder.Entity<CategoryProduct>()
             .HasOne(cp => cp.Category)
             .WithMany(c => c.CategoryProducts)
-            .HasForeignKey(cp => cp.CategoryId);
+            .HasForeignKey(cp => cp.CategoryId)
+            .OnDelete(DeleteBehavior.Restrict); // Ýliþkiyi opsiyonel yapmak yerine silme davranýþýný sýnýrlandýr
 
         builder.Entity<CategoryProduct>()
             .HasOne(cp => cp.Product)
@@ -108,7 +110,7 @@ public class CarpetProjectDbContext :
             .HasMany(p => p.Images)
             .WithOne(i => i.Product)
             .HasForeignKey(i => i.ProductId)
-            .OnDelete(DeleteBehavior.SetNull); // Product silindiðinde iliþkili Imagenin resmi null olur
+            .OnDelete(DeleteBehavior.SetNull); // Product silindiðinde iliþkili Imagenin ProductId'si null olur
 
         // Kategori ve Image arasýnda bire bir iliþki
         builder.Entity<Category>()
@@ -117,13 +119,21 @@ public class CarpetProjectDbContext :
             .HasForeignKey<Image>(i => i.CategoryId) // Image'da CategoryId foreign key olarak kullanýlýr
             .OnDelete(DeleteBehavior.SetNull); // Kategori silindiðinde iliþkili Image'ýn CategoryId null olur
 
+        // Kategori için ParentCategory iliþkisi
         builder.Entity<Category>()
-         .HasOne(c => c.ParentCategory)
-         .WithMany() // ParentCategory'nin alt kategorileri bu koleksiyonla yönetilmeyecek
-         .HasForeignKey(c => c.ParentCategoryId)
-         .OnDelete(DeleteBehavior.Restrict); // Silme davranýþý 
+            .HasOne(c => c.ParentCategory)
+            .WithMany() // ParentCategory'nin alt kategorileri bu koleksiyonla yönetilmeyecek
+            .HasForeignKey(c => c.ParentCategoryId)
+            .OnDelete(DeleteBehavior.Restrict); // Silme davranýþýný sýnýrla
 
-     
+        // Eðer Category üzerinde bir global query filter kullanýyorsanýz, ayný query filter'ý CategoryProduct için de ekleyin:
+        builder.Entity<Category>()
+            .HasQueryFilter(c => !c.IsDeleted); // Örneðin, soft delete kullanýyorsanýz
+
+        builder.Entity<CategoryProduct>()
+            .HasQueryFilter(cp => !cp.Category.IsDeleted); // Ayný filter CategoryProduct için de uygulanmalý
+
+
 
         builder.ConfigureCmsKit();
         }

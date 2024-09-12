@@ -27,7 +27,7 @@ namespace CarpetProject.Entities.Products
         public List<CategoryDto> Categories { get; set; } = new List<CategoryDto>();
 
         // Resim DTO'ları
-        public List<ImageDto> Images { get; set; } = new List<ImageDto>();
+        public List<ImageDto>? Images { get; set; } = new List<ImageDto>();
 
     }
 }
