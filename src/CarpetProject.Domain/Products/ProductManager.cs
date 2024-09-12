@@ -13,6 +13,7 @@ using CarpetProject.Entities.Products;
 using Volo.Abp;
 using CarpetProject.Entities.Categories;
 using CarpetProject.EntityDto.ProductImages;
+using Volo.Abp.Uow;
 
 namespace CarpetProject.Products
 {
@@ -23,14 +24,16 @@ namespace CarpetProject.Products
         private readonly IRepository<Image, int> _productImageRepository;
         private readonly IRepository<CategoryProduct, int> _CategoryProductRepository;
         private readonly IMapper _mapper;
+        private readonly IUnitOfWorkManager _unitOfWorkManager;
 
-        public ProductManager(IRepository<Product, int> productRepository, IRepository<Category, int> categoryRepository, IRepository<Image, int> productImageRepository, IRepository<CategoryProduct, int> categoryProductRepository, IMapper mapper)
+        public ProductManager(IRepository<Product, int> productRepository, IRepository<Category, int> categoryRepository, IRepository<Image, int> productImageRepository, IRepository<CategoryProduct, int> categoryProductRepository, IMapper mapper, IUnitOfWorkManager unitOfWorkManager)
         {
             _productRepository = productRepository;
             _categoryRepository = categoryRepository;
             _productImageRepository = productImageRepository;
             _CategoryProductRepository = categoryProductRepository;
             _mapper = mapper;
+            _unitOfWorkManager = unitOfWorkManager;
         }
 
         public async Task<ProductDto> CreateAsync(CreateProductDto input)
@@ -48,6 +51,7 @@ namespace CarpetProject.Products
 
             // 3. Ürünü veritabanına ekleyin
             await _productRepository.InsertAsync(product);
+            await _unitOfWorkManager.Current.SaveChangesAsync();
 
             // 4. Kategori ID'lerinin geçerliliğini kontrol et ve CategoryProduct ilişkisini kur
             if (input.CategoryIds != null && input.CategoryIds.Any())

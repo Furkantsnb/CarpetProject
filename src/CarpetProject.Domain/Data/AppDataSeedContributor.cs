@@ -20,18 +20,17 @@ namespace CarpetProject
     public class AppDataSeedContributor : IDataSeedContributor,ITransientDependency
     {
 
-         private readonly IRepository<Category, int> _categoryRepository;
+        private readonly IRepository<Category, int> _categoryRepository;
         private readonly IRepository<Product, int> _productRepository;
         private readonly IRepository<Image, int> _imageRepository;
+        private readonly IRepository<CategoryProduct,int> _categoryProductRepository;
 
-        public AppDataSeedContributor(
-            IRepository<Category, int> categoryRepository,
-            IRepository<Product, int> productRepository,
-            IRepository<Image, int> imageRepository)
+        public AppDataSeedContributor(IRepository<Category, int> categoryRepository, IRepository<Product, int> productRepository, IRepository<Image, int> imageRepository, IRepository<CategoryProduct, int> categoryProductRepository)
         {
             _categoryRepository = categoryRepository;
             _productRepository = productRepository;
             _imageRepository = imageRepository;
+            _categoryProductRepository = categoryProductRepository;
         }
 
         public async Task SeedAsync(DataSeedContext context)
@@ -47,7 +46,7 @@ namespace CarpetProject
             var electronics = await InsertCategoryIfNotExistsAsync(new CreateCategoryDto
             {
                 Name = "Çocuk odası",
-                Description = "çocuk odası",
+                Description = "Çocuk odası",
                 IsApproved = true,
                 ColorCode = "#FF5733",
                 ImageId = 1, // Bu ID'ler daha sonra güncellenebilir
@@ -57,7 +56,7 @@ namespace CarpetProject
             var fashion = await InsertCategoryIfNotExistsAsync(new CreateCategoryDto
             {
                 Name = "Yatak odası",
-                Description = "yatak odası",
+                Description = "Yatak odası",
                 IsApproved = true,
                 ColorCode = "#33FF57",
                 ImageId = 2,
@@ -101,7 +100,7 @@ namespace CarpetProject
                 Description = "Latest smartphones.",
                 IsApproved = true,
                 ColorCode = "#FF5733",
-                ParentCategoryId =1,
+                ParentCategoryId = electronics.Id,
                 ImageId = 6,
                 ProductIds = new List<int> { 2, 3 }
             });
@@ -112,7 +111,7 @@ namespace CarpetProject
                 Description = "Various types of laptops.",
                 IsApproved = true,
                 ColorCode = "#FF5733",
-                ParentCategoryId = 2,
+                ParentCategoryId = fashion.Id,
                 ImageId = 7,
                 ProductIds = new List<int> { 4, 5 }
             });
@@ -123,7 +122,7 @@ namespace CarpetProject
                 Description = "Fashion for men.",
                 IsApproved = true,
                 ColorCode = "#33FF57",
-                ParentCategoryId = 3,
+                ParentCategoryId = home.Id,
                 ImageId = 8,
                 ProductIds = new List<int> { 6, 7 }
             });
@@ -134,7 +133,7 @@ namespace CarpetProject
                 Description = "Fashion for women.",
                 IsApproved = true,
                 ColorCode = "#33FF57",
-                ParentCategoryId = 4,
+                ParentCategoryId = books.Id,
                 ImageId = 9,
                 ProductIds = new List<int> { 8, 9 }
             });
@@ -145,7 +144,7 @@ namespace CarpetProject
                 Description = "Appliances for kitchen.",
                 IsApproved = true,
                 ColorCode = "#5733FF",
-                ParentCategoryId = 5,
+                ParentCategoryId = toys.Id,
                 ImageId = 10,
                 ProductIds = new List<int> { 10 }
             });
@@ -163,169 +162,237 @@ namespace CarpetProject
                     IsApproved = input.IsApproved,
                     ColorCode = input.ColorCode,
                     ImageId = input.ImageId, // Resim ID'si ekleniyor
-                    ParentCategoryId = input.ParentCategoryId,
-                    CategoryProducts = input.ProductIds.Select(productId => new CategoryProduct { ProductId = productId }).ToList() // Ürün ID'leri ekleniyor
+                    ParentCategoryId = input.ParentCategoryId
                 };
                 await _categoryRepository.InsertAsync(category);
-                return category;
+
+
+                // Eklendikten sonra ID'yi almak için tekrar sorgulama yapalım
+                existingCategory = await _categoryRepository.FirstOrDefaultAsync(c => c.Name == input.Name);
             }
+
+            // Kategori ürünlerini ekleyelim
+            if (input.ProductIds != null && input.ProductIds.Any())
+            {
+                foreach (var productId in input.ProductIds)
+                {
+                    await _categoryProductRepository.InsertAsync(new CategoryProduct
+                    {
+                        CategoryId = existingCategory.Id,
+                        ProductId = productId
+                    });
+                }
+            }
+
             return existingCategory;
         }
 
         private async Task SeedProductsAsync()
         {
             var products = new List<CreateProductDto>
+        {
+            new CreateProductDto
             {
-                new CreateProductDto
-                {
-                    Name = "Çocuk odası-1",
-                    Price = 299.99M,
-                    HasDiscount = true,
-                    OldPrice = 300,
-                    Certification = true,
-                    Description = "Çocuk odası-1",
-                    Ingredients = "Çocuk odası-1",
-                    Usage = "Çocuk odası-1",
-                    AdditionalInfo = "Çocuk odası-1",
-                    IsApproved = true,
-                    CategoryIds = new List<int> { 1 },
-                    ImageIds = new List<int>{1}
-                },
-                new CreateProductDto
-                {
-                    Name = "Çocuk odası-2",
-                    Price = 299.99M,
-                    HasDiscount = true,
-                    OldPrice = 300,
-                    Certification = true,
-                    Description = "Çocuk odası-2",
-                    Ingredients = "Çocuk odası-2",
-                    Usage = "Çocuk odası-2",
-                    AdditionalInfo = "Çocuk odası-2",
-                    IsApproved = true,
-                    CategoryIds = new List<int> { 1, 6 },
-                    ImageIds = new List<int>{2}
-                },
-                new CreateProductDto
-                {
-                    Name = "Çocuk odası-3",
-                    Price = 299.99M,
-                    HasDiscount = true,
-                    OldPrice = 300,
-                    Certification = true,
-                    Description = "Çocuk odası-3",
-                    Ingredients = "Çocuk odası-3",
-                    Usage = "Çocuk odası-3",
-                    AdditionalInfo = "Çocuk odası-3",
-                    IsApproved = true,
-                    CategoryIds = new List<int> { 1, 6 },
-                    ImageIds = new List<int>{3}
-                },
-                new CreateProductDto
-                {
-                    Name = "Yatak odası-1",
-                    Price = 299.99M,
-                    HasDiscount = true,
-                    OldPrice = 300,
-                    Certification = true,
-                    Description = "Yatak odası-1",
-                    Ingredients = "Yatak odası-1",
-                    Usage = "Yatak odası-1",
-                    AdditionalInfo = "Yatak odası-1",
-                    IsApproved = true,
-                    CategoryIds = new List<int> { 2, 7 },
-                    ImageIds = new List<int>{4}
-                },
-                new CreateProductDto
-                {
-                    Name = "Yatak odası-2",
-                    Price = 299.99M,
-                    HasDiscount = true,
-                    OldPrice = 300,
-                    Certification = true,
-                    Description = "Yatak odası-2",
-                    Ingredients = "Yatak odası-2",
-                    Usage = "Yatak odası-2",
-                    AdditionalInfo = "Yatak odası-2",
-                    IsApproved = true,
-                    CategoryIds = new List<int> { 2, 7 },
-                    ImageIds = new List<int>{5}
-                },
-                new CreateProductDto
-                {
-                    Name = "Salon",
-                    Price = 299.99M,
-                    HasDiscount = true,
-                    OldPrice = 300,
-                    Certification = true,
-                    Description = "Salon",
-                    Ingredients = "Salon",
-                    Usage = "Salon",
-                    AdditionalInfo = "Salon",
-                    IsApproved = true,
-                    CategoryIds = new List<int> { 3 },
-                    ImageIds = new List<int>{6}
-                },
-                new CreateProductDto
-                {
-                    Name = "Kaymaz",
-                    Price = 299.99M,
-                    HasDiscount = true,
-                    OldPrice = 300,
-                    Certification = true,
-                    Description = "Kaymaz",
-                    Ingredients = "Kaymaz",
-                    Usage = "Kaymaz",
-                    AdditionalInfo = "Kaymaz",
-                    IsApproved = true,
-                    CategoryIds = new List<int> { 4 },
-                    ImageIds = new List<int>{7}
-                },
-                new CreateProductDto
-                {
-                    Name = "Peluş",
-                    Price = 299.99M,
-                    HasDiscount = true,
-                    OldPrice = 300,
-                    Certification = true,
-                    Description = "Peluş",
-                    Ingredients = "Peluş",
-                    Usage = "Peluş",
-                    AdditionalInfo = "Peluş",
-                    IsApproved = true,
-                    CategoryIds = new List<int> { 5 },
-                    ImageIds = new List<int>{8}
-                }
-            };
+                Name = "Çocuk odası-1",
+                Price = 299.99M,
+                HasDiscount = true,
+                OldPrice = 300,
+                Certification = true,
+                Description = "Çocuk odası-1",
+                Ingredients = "Çocuk odası-1",
+                Usage = "Çocuk odası-1",
+                AdditionalInfo = "Çocuk odası-1",
+                IsApproved = true,
+                CategoryIds = new List<int> { 1 },
+                ImageIds = new List<int>{1}
+            },
+            new CreateProductDto
+            {
+                Name = "Çocuk odası-2",
+                Price = 299.99M,
+                HasDiscount = true,
+                OldPrice = 300,
+                Certification = true,
+                Description = "Çocuk odası-2",
+                Ingredients = "Çocuk odası-2",
+                Usage = "Çocuk odası-2",
+                AdditionalInfo = "Çocuk odası-2",
+                IsApproved = true,
+                CategoryIds = new List<int> { 1, 6 },
+                ImageIds = new List<int>{2}
+            },
+            new CreateProductDto
+            {
+                Name = "Çocuk odası-3",
+                Price = 299.99M,
+                HasDiscount = true,
+                OldPrice = 300,
+                Certification = true,
+                Description = "Çocuk odası-3",
+                Ingredients = "Çocuk odası-3",
+                Usage = "Çocuk odası-3",
+                AdditionalInfo = "Çocuk odası-3",
+                IsApproved = true,
+                CategoryIds = new List<int> { 1, 6 },
+                ImageIds = new List<int>{3}
+            },
+            new CreateProductDto
+            {
+                Name = "Yatak odası-1",
+                Price = 299.99M,
+                HasDiscount = true,
+                OldPrice = 300,
+                Certification = true,
+                Description = "Yatak odası-1",
+                Ingredients = "Yatak odası-1",
+                Usage = "Yatak odası-1",
+                AdditionalInfo = "Yatak odası-1",
+                IsApproved = true,
+                CategoryIds = new List<int> { 2, 7 },
+                ImageIds = new List<int>{4}
+            },
+            new CreateProductDto
+            {
+                Name = "Yatak odası-2",
+                Price = 299.99M,
+                HasDiscount = true,
+                OldPrice = 300,
+                Certification = true,
+                Description = "Yatak odası-2",
+                Ingredients = "Yatak odası-2",
+                Usage = "Yatak odası-2",
+                AdditionalInfo = "Yatak odası-2",
+                IsApproved = true,
+                CategoryIds = new List<int> { 2, 7 },
+                ImageIds = new List<int>{5}
+            },
+            new CreateProductDto
+            {
+                Name = "Salon",
+                Price = 299.99M,
+                HasDiscount = true,
+                OldPrice = 300,
+                Certification = true,
+                Description = "Salon",
+                Ingredients = "Salon",
+                Usage = "Salon",
+                AdditionalInfo = "Salon",
+                IsApproved = true,
+                CategoryIds = new List<int> { 3 },
+                ImageIds = new List<int>{6}
+            },
+            new CreateProductDto
+            {
+                Name = "Kaymaz",
+                Price = 299.99M,
+                HasDiscount = true,
+                OldPrice = 300,
+                Certification = true,
+                Description = "Kaymaz",
+                Ingredients = "Kaymaz",
+                Usage = "Kaymaz",
+                AdditionalInfo = "Kaymaz",
+                IsApproved = true,
+                CategoryIds = new List<int> { 4 },
+                ImageIds = new List<int>{7}
+            },
+            new CreateProductDto
+            {
+                Name = "Peluş",
+                Price = 299.99M,
+                HasDiscount = true,
+                OldPrice = 300,
+                Certification = true,
+                Description = "Peluş",
+                Ingredients = "Peluş",
+                Usage = "Peluş",
+                AdditionalInfo = "Peluş",
+                IsApproved = true,
+                CategoryIds = new List<int> { 5 },
+                ImageIds = new List<int>{8}
+            }
+        };
 
             foreach (var product in products)
             {
-                var existingProduct = await _productRepository.FirstOrDefaultAsync(p => p.Name == product.Name);
-                if (existingProduct == null)
+                await InsertProductIfNotExistsAsync(product);
+            }
+        }
+
+        private async Task<Product> InsertProductIfNotExistsAsync(CreateProductDto input)
+        {
+            var existingProduct = await _productRepository.FirstOrDefaultAsync(p => p.Name == input.Name);
+            if (existingProduct == null)
+            {
+                var product = new Product
                 {
-                    var newProduct = new Product
+                    Name = input.Name,
+                    Price = input.Price,
+                    HasDiscount = input.HasDiscount,
+                    OldPrice = input.OldPrice,
+                    Certification = input.Certification,
+                    Description = input.Description,
+                    Ingredients = input.Ingredients,
+                    Usage = input.Usage,
+                    AdditionalInfo = input.AdditionalInfo,
+                    IsApproved = input.IsApproved
+                };
+                await _productRepository.InsertAsync(product);
+
+
+                // Eklendikten sonra ID'yi almak için tekrar sorgulama yapalım
+                existingProduct = await _productRepository.FirstOrDefaultAsync(p => p.Name == input.Name);
+            }
+
+            // Ürün resimlerini ekleyelim
+            if (input.ImageIds != null && input.ImageIds.Any())
+            {
+                foreach (var imageId in input.ImageIds)
+                {
+                    await _imageRepository.InsertAsync(new Image
                     {
-                        Name = product.Name,
-                        Price = product.Price,
-                        HasDiscount = product.HasDiscount,
-                        OldPrice = product.OldPrice,
-                        Certification = product.Certification,
-                        Description = product.Description,
-                        Ingredients = product.Ingredients,
-                        Usage = product.Usage,
-                        AdditionalInfo = product.AdditionalInfo,
-                        IsApproved = product.IsApproved,
-                        CategoryProducts = product.CategoryIds.Select(categoryId => new CategoryProduct { CategoryId = categoryId }).ToList()
-                    };
-
-                    // İlgili Image nesnelerini almak için ImageRepository kullanın
-                    var images = await _imageRepository.GetListAsync(i => product.ImageIds.Contains(i.Id));
-
-                    newProduct.Images = images;
-
-                    await _productRepository.InsertAsync(newProduct);
+                        ProductId = existingProduct.Id,
+                     
+                    });
                 }
             }
+
+            // Ürün kategorilerini ekleyelim
+            if (input.CategoryIds != null && input.CategoryIds.Any())
+            {
+                foreach (var categoryId in input.CategoryIds)
+                {
+                    await _categoryProductRepository.InsertAsync(new CategoryProduct
+                    {
+                        ProductId = existingProduct.Id,
+                        CategoryId = categoryId
+                    });
+                }
+            }
+
+            return existingProduct;
+        }
+        private async Task<Image> InsertImageIfNotExistsAsync(string filePath, int? categoryId, int? productId)
+        {
+            var fileName = Path.GetFileName(filePath);
+            var imageUrl = $"/images/DataSeedImage/{fileName}";
+
+            var existingImage = await _imageRepository.FirstOrDefaultAsync(i => i.ImageUrl == imageUrl);
+            if (existingImage == null)
+            {
+                var image = new Image
+                {
+                    Name = fileName,
+                    ImageUrl = imageUrl,
+                    CategoryId = categoryId,
+                    ProductId = productId
+                };
+
+                await _imageRepository.InsertAsync(image);
+                return image;
+            }
+
+            return existingImage;
         }
 
         private async Task SeedImagesAsync()
@@ -342,32 +409,10 @@ namespace CarpetProject
             var categories = await _categoryRepository.GetListAsync();
             var products = await _productRepository.GetListAsync();
 
-            var images = new List<Image>();
-
             for (int i = 0; i < Math.Min(10, imageFiles.Length); i++)
             {
                 var filePath = imageFiles[i];
-                var fileName = Path.GetFileName(filePath);
-                var imageUrl = $"/images/DataSeedImage/{fileName}";
-
-                var image = new Image
-                {
-                    Name = fileName,
-                    ImageUrl = imageUrl,
-                    CategoryId = i < categories.Count ? categories[i].Id : (int?)null,
-                    ProductId = i < products.Count ? products[i].Id : (int?)null
-                };
-
-                images.Add(image);
-            }
-
-            foreach (var image in images)
-            {
-                var existingImage = await _imageRepository.FirstOrDefaultAsync(i => i.ImageUrl == image.ImageUrl);
-                if (existingImage == null)
-                {
-                    await _imageRepository.InsertAsync(image);
-                }
+                var image = await InsertImageIfNotExistsAsync(filePath, i < categories.Count ? categories[i].Id : (int?)null, i < products.Count ? products[i].Id : (int?)null);
             }
         }
     }
